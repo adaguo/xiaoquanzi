@@ -20,7 +20,8 @@
         --card: #f9f4e5;
         --ink: #2f2a20;
         --ink-soft: #71634e;
-        --ink-faint: #9a8a6e;
+        --ink-faint: var(--ink-soft);
+        --seal-ink: #9c3d2a;
         --accent: #9c3d2a;
         --accent-soft: rgba(156, 61, 42, 0.12);
         --moss: #5c6b4a;
@@ -38,7 +39,7 @@
           --card: #211d15;
           --ink: #eadfc6;
           --ink-soft: #b3a586;
-          --ink-faint: #7d7057;
+          --ink-faint: var(--ink-soft);
           --accent: #d0876a;
           --accent-soft: rgba(208, 135, 106, 0.16);
           --moss: #a3b184;
@@ -71,7 +72,7 @@
       .seal {
         display: inline-grid; place-items: center;
         width: 2rem; height: 2rem; flex: none;
-        background: var(--accent); color: #f7efdd;
+        background: var(--seal-ink); color: #f7efdd;
         font-family: var(--hand); font-size: 1.25rem; line-height: 1;
         border-radius: 5px 2px 6px 3px;
         transform: rotate(-3deg);
@@ -270,8 +271,8 @@
       #hostPanel { border: 1px solid var(--line-strong); border-radius: 4px; }
       #hostPanel .seal {
         width: 1.8rem; height: 1.8rem; font-size: 1.1rem;
-        background: transparent; color: #B0714F;
-        border: 1.5px solid #B0714F; border-radius: 3px;
+        background: transparent; color: var(--seal-ink);
+        border: 1.5px solid var(--seal-ink); border-radius: 3px;
         box-shadow: none;
       }
       #hostPanel input[type="text"], #hostPanel input[type="datetime-local"], #hostPanel textarea { border-radius: 4px; }
@@ -411,7 +412,7 @@
         padding: 0.32rem 1rem; transition: all 0.25s;
       }
       .vote-btn:hover { background: var(--accent-soft); }
-      .vote-btn.on { background: var(--accent); color: #f7efdd; }
+      .vote-btn.on { background: var(--seal-ink); color: #f7efdd; }
       .vote-btn[disabled] { cursor: default; opacity: 0.9; }
       .vote-count { font-family: var(--hand); font-size: 1.15rem; color: var(--accent); }
       .rank-row { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.55rem 0.3rem; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
@@ -517,7 +518,7 @@
       .bb-vote {
         font-family: var(--serif); font-size: 14px; line-height: 1.35; cursor: pointer;
         color: #B0714F; background: transparent;
-        border: 1.5px solid #B0714F; border-radius: 2px;
+        border: 1.5px solid var(--seal-ink); border-radius: 2px;
         padding: 8px 18px; transition: background 0.25s, color 0.25s; white-space: nowrap;
       }
       .bb-vote:hover { background: rgba(176, 113, 79, 0.14); }
@@ -756,6 +757,35 @@
       footer.site .f1 { font-family: var(--hand); font-size: 1.6rem; margin: 0; }
       footer.site p { color: var(--ink-faint); font-size: 0.85rem; margin: 0.5rem 0 0; letter-spacing: 0.12em; }
       footer.site .seal { margin-bottom: 0.8rem; }
+
+      /* 审查修复：可读提示、触控范围与章节导航 */
+      .section-nav, .entry-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:1rem auto; }
+      .section-nav a, .entry-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.5rem .85rem; border:1px solid var(--line-strong); border-radius:24px; color:var(--ink-soft); text-decoration:none; }
+      .section-nav a:focus-visible, .entry-actions a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+      .enter-line a { display:inline-flex; align-items:center; min-height:44px; padding:.4rem .65rem; color:var(--ink-soft); text-underline-offset:.25em; }
+      .copy-btn { min-height:44px; }
+      .section-nav a[hidden] { display:none; }
+      .tb-btn, .sign-link, .contact-x, .mini-btn, .tname-pencil, .codes-pencil { min-height:44px; min-width:44px; }
+      section[id], #joinBox, #templateZone, #myBoardsBox { scroll-margin-top:5rem; }
+      .empty-boards { color:var(--ink-soft); margin: .75rem 0; }
+      .payment-empty { display:grid; place-items:center; min-height:100px; padding:1rem; border:1px dashed var(--line-strong); color:var(--ink-soft); text-align:center; font-size:1rem; }
+      @media (max-width:640px) {
+        input, textarea, select, .join-box .link-box input[type="text"], .field input { font-size:16px; }
+        .tname-edit input[type="text"], .codes-edit input[type="text"], .wish-confirm input[type="text"] { font-size:16px; }
+      }
+      /* 手机内容宽度固定在可视区域内，避免 Grid 内在尺寸与 Safari 文本自动放大造成裁切。 */
+      html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+      .front { grid-template-columns:minmax(0, 1fr); }
+      .front-box { min-width:0; max-width:min(30rem, 100%); }
+      .front-form, .join-box, .link-box { min-width:0; max-width:100%; }
+      @media (max-width:640px) {
+        .myboard-row { display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; gap:.6rem; width:100%; }
+        .myboard-date { margin-left:0; justify-self:end; }
+        .myboard-row .mini-btn { width:100%; min-width:0; white-space:normal; overflow-wrap:anywhere; }
+        .front-box input, .front-box textarea { min-width:0; max-width:100%; }
+        .link-box input[type="text"] { width:0; min-width:0; flex:1 1 0; }
+        .mod-pills { max-width:100%; flex-wrap:wrap; }
+      }
     </style>
   </head>
   <body>
@@ -775,6 +805,7 @@
           <p id="gateMsg" role="status"></p>
           <button class="door-btn" type="submit">推 门</button>
         </form>
+        <p class="enter-line"><a href="/">← 返回小圈子</a></p>
         <p class="hint">暗号啊，就是那个最简单的词 —— 关于爱的。<br />本周主理人，另有一把钥匙。</p>
       </div>
     </div>
@@ -793,9 +824,12 @@
           <img src="assets/hero.jpg" alt="午后光线里的乔家大院餐厅：旧木长桌上摆着手作陶碗与一口冒着热气的陶锅，陶瓶里插着一枝柿子" width="1920" height="1280" />
           <figcaption>秋 · 柿子红了</figcaption>
         </figure>
-        <nav aria-label="院内导航">
+        <nav class="section-nav" aria-label="院内导航">
           <a href="#drinks"><span class="n">壹</span>酒水单</a>
           <a href="#thursday"><span class="n">贰</span>拼好饭</a>
+          <a href="#wishBoard">许愿池</a>
+          <a href="#fundSection">大院基金</a>
+          <a href="/">返回小圈子</a>
         </nav>
       </header>
 
@@ -2972,7 +3006,7 @@
           ctx.save();
           ctx.translate(sealX, sealY);
           ctx.rotate(-0.03);
-          ctx.fillStyle = ACC;
+          ctx.fillStyle = "#9c3d2a";
           ctx.beginPath();
           if (ctx.roundRect) ctx.roundRect(0, 0, sealS, sealS, 4); else ctx.rect(0, 0, sealS, sealS);
           ctx.fill();

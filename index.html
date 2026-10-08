@@ -20,7 +20,8 @@
         --card: #f9f4e5;
         --ink: #2f2a20;
         --ink-soft: #71634e;
-        --ink-faint: #9a8a6e;
+        --ink-faint: var(--ink-soft);
+        --seal-ink: #9c3d2a;
         --accent: #9c3d2a;
         --accent-soft: rgba(156, 61, 42, 0.12);
         --terra: #b0714f;
@@ -45,7 +46,7 @@
           --card: #211d15;
           --ink: #eadfc6;
           --ink-soft: #b3a586;
-          --ink-faint: #7d7057;
+          --ink-faint: var(--ink-soft);
           --accent: #d0876a;
           --accent-soft: rgba(208, 135, 106, 0.16);
           --line: rgba(234, 223, 198, 0.2);
@@ -65,7 +66,7 @@
         font-family: var(--serif);
         color: var(--ink);
         background-color: var(--paper);
-        background-image: url('assets/noise-ink.png');
+        background-image: url('/assets/noise-ink.png');
         background-size: 180px 180px;
         line-height: 1.75;
         -webkit-font-smoothing: antialiased;
@@ -78,7 +79,7 @@
       .seal {
         display: inline-grid; place-items: center;
         width: 2rem; height: 2rem; flex: none;
-        background: var(--accent); color: #f7efdd;
+        background: var(--seal-ink); color: #f7efdd;
         font-family: var(--hand); font-size: 1.25rem; line-height: 1;
         border-radius: 4px;
         transform: rotate(-3deg);
@@ -282,21 +283,18 @@
       .join-box .link-box input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
       .bid-label { text-align: center; font-size: 0.78rem; letter-spacing: 0.34em; text-indent: 0.34em; color: var(--ink-faint); margin: 0 0 0.5rem; }
 
-      /* ---------- 品牌印章（原图红章 · 白底以 multiply 融入纸纹） ---------- */
+      /* ---------- 品牌印章（固定朱红 · 原图白底透明，不随皮肤混色） ---------- */
       .brand-seal {
         display: inline-block; flex: none;
         width: 7.4rem; height: auto;
-        mix-blend-mode: multiply;
+        mix-blend-mode: normal;
+        filter: url(#seal-red-ink);
         transform: rotate(-1.3deg);
         margin-bottom: 1.1rem;
         user-select: none; -webkit-user-drag: none;
       }
       .brand-seal.in-row { margin: 0; width: 4.9rem; }
       .brand-seal.in-foot { margin-bottom: 0.9rem; width: 6.8rem; }
-      @media (prefers-color-scheme: dark) {
-        /* 深色纸面上：反相后用 screen 让白底同样隐去，只留朱红 */
-        .brand-seal { mix-blend-mode: screen; filter: invert(1) hue-rotate(180deg) saturate(1.35); }
-      }
 
       /* ---------- 模板 ---------- */
       .tpl-box { margin-top: 2.2rem; padding-top: 1.6rem; border-top: 1px solid var(--line); text-align: left; }
@@ -441,8 +439,8 @@
       .panel h3 { font-family: var(--hand); font-weight: 400; font-size: 1.5rem; margin: 0 0 0.8rem; display: flex; align-items: center; gap: 0.6rem; }
       #hostPanel .seal {
         width: 1.8rem; height: 1.8rem; font-size: 1.1rem;
-        background: transparent; color: var(--terra);
-        border: 1.5px solid var(--terra); border-radius: 3px;
+        background: transparent; color: var(--seal-ink);
+        border: 1.5px solid var(--seal-ink); border-radius: 3px;
         box-shadow: none;
       }
       .dinner-when { text-align: center; padding: 0.4rem 0 1rem; margin-bottom: 1.1rem; }
@@ -502,7 +500,7 @@
         background-image:
           radial-gradient(42% 26% at 20% 18%, rgba(242, 237, 227, 0.045), rgba(242, 237, 227, 0) 72%),
           radial-gradient(34% 24% at 82% 76%, rgba(242, 237, 227, 0.035), rgba(242, 237, 227, 0) 70%),
-          url('assets/noise-chalk.png');
+          url('/assets/noise-chalk.png');
         background-size: auto, auto, 180px 180px;
         border: 9px solid var(--frame);
         border-radius: 4px;
@@ -584,7 +582,7 @@
       .bb-vote {
         font-family: var(--serif); font-size: 14px; line-height: 1.35; cursor: pointer;
         color: var(--terra); background: transparent;
-        border: 1.5px solid var(--terra); border-radius: 2px;
+        border: 1.5px solid var(--seal-ink); border-radius: 2px;
         padding: 8px 18px; transition: background 0.25s, color 0.25s; white-space: nowrap;
       }
       .bb-vote:hover { background: color-mix(in srgb, var(--terra) 14%, transparent); }
@@ -677,9 +675,9 @@
         padding: 0.85rem 0.5rem 0.7rem; border-radius: 4px;
         transition: filter 0.25s, background 0.25s, color 0.25s, border-color 0.25s, transform 0.15s;
       }
-      .wish-cta-btn.primary { color: var(--pool-card); background: var(--terra); border: 1.5px solid var(--terra); }
+      .wish-cta-btn.primary { color: var(--pool-card); background: var(--terra); border: 1.5px solid var(--seal-ink); }
       .wish-cta-btn.primary:hover { filter: brightness(1.07); }
-      .wish-cta-btn.ghost { color: var(--terra); background: transparent; border: 1.5px solid var(--terra); }
+      .wish-cta-btn.ghost { color: var(--terra); background: transparent; border: 1.5px solid var(--seal-ink); }
       .wish-cta-btn.ghost:hover { background: color-mix(in srgb, var(--terra) 10%, transparent); }
       .wish-cta-btn.on { box-shadow: 0 0 0 3px color-mix(in srgb, var(--terra) 28%, transparent); }
       .wish-cta-btn:active { transform: scale(0.98); }
@@ -690,8 +688,8 @@
         font-family: var(--hand); font-size: 1.15rem; line-height: 1; border-radius: 4px;
         transform: rotate(-3deg);
       }
-      .wish-badge.b-wish { background: var(--accent); color: #f7efdd; box-shadow: inset 0 0 0 1.5px rgba(247, 239, 221, 0.5); }
-      .wish-badge.b-do { background: transparent; color: var(--terra); border: 1.5px solid var(--terra); box-shadow: none; }
+      .wish-badge.b-wish { background: var(--seal-ink); color: #f7efdd; box-shadow: inset 0 0 0 1.5px rgba(247, 239, 221, 0.5); }
+      .wish-badge.b-do { background: transparent; color: var(--seal-ink); border: 1.5px solid var(--seal-ink); box-shadow: none; }
       .wish-status { font-size: 0.85rem; color: var(--terra); word-break: keep-all; overflow-wrap: anywhere; }
       .wish-row.done { opacity: 0.52; }
       .wish-row.done .wish-dish { color: color-mix(in srgb, var(--pool-ink) 78%, transparent); }
@@ -871,15 +869,19 @@
       .qr-acts .mini-btn:hover { color: var(--terra); border-color: var(--terra); }
       .qr-zone .form-msg { color: var(--terra); }
 
-      /* ---------- 我开过的板 / 开板二次确认 / 酒水单 ---------- */
+      /* ---------- 最近访问 / 开板二次确认 / 酒水单 ---------- */
       .myboard-row {
-        display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap;
-        padding: 0.55rem 0.2rem; border-bottom: 1px solid var(--line);
+        display: grid; grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center; gap: 1rem; padding: 1rem 0;
+        border-bottom: 1px solid var(--line);
       }
-      .myboard-row .mini-btn { flex: none; }
       .myboard-row:last-child { border-bottom: none; }
-      .myboard-name { font-family: var(--hand); font-size: 1.25rem; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
-      .myboard-date { font-size: 0.8rem; color: var(--ink-faint); white-space: nowrap; margin-left: auto; }
+      .myboard-info { min-width: 0; display: grid; gap: .25rem; }
+      .myboard-name { font-family: var(--hand); font-size: 1.25rem; color: var(--ink); overflow-wrap: anywhere; }
+      .myboard-date { font-size: .8rem; color: var(--ink-faint); }
+      .myboard-actions { display: grid; justify-items: stretch; }
+      .myboard-row .mini-btn { width: auto; min-width: 4rem; min-height: 44px; padding: .35rem .7rem; }
+      .myboard-row .myboard-remove { border-color: transparent; background: transparent; color: var(--ink-soft); font-size: .8rem; }
       .dup-acts { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.4rem; }
       .drink-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem; }
       .drink-row {
@@ -1016,9 +1018,45 @@
           padding: 1.4rem 1.25rem calc(1.3rem + env(safe-area-inset-bottom));
         }
       }
+
+      /* 审查修复：可读提示、触控范围与章节导航 */
+      .section-nav, .entry-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:1rem auto; }
+      .section-nav a, .entry-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.5rem .85rem; border:1px solid var(--line-strong); border-radius:24px; color:var(--ink-soft); text-decoration:none; }
+      .section-nav a:focus-visible, .entry-actions a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+      .enter-line a { display:inline-flex; align-items:center; min-height:44px; padding:.4rem .65rem; color:var(--ink-soft); text-underline-offset:.25em; }
+      .copy-btn { min-height:44px; }
+      .section-nav a[hidden] { display:none; }
+      .tb-btn, .sign-link, .contact-x, .mini-btn, .codes-edit-btn, .tname-btn { min-height:44px; min-width:44px; }
+      section[id], #joinBox, #templateZone, #myBoardsBox, #wishBoard { scroll-margin-top:5rem; }
+      .empty-boards { color:var(--ink-soft); margin: .75rem 0; }
+      .payment-empty { display:grid; place-items:center; min-height:100px; padding:1rem; border:1px dashed var(--line-strong); color:var(--ink-soft); text-align:center; font-size:1rem; }
+      @media (max-width:640px) {
+        input, textarea, select, .join-box .link-box input[type="text"], .field input { font-size:16px; }
+        .tname-edit input[type="text"], .codes-edit input[type="text"], .wish-confirm input[type="text"] { font-size:16px; }
+      }
+      /* 手机内容宽度固定在可视区域内，避免 Grid 内在尺寸与 Safari 文本自动放大造成裁切。 */
+      html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+      .front { grid-template-columns:minmax(0, 1fr); }
+      .front-box { min-width:0; max-width:min(30rem, 100%); }
+      .front-form, .join-box, .link-box { min-width:0; max-width:100%; }
+      @media (max-width:640px) {
+
+        .front-box input, .front-box textarea { min-width:0; max-width:100%; }
+        .link-box input[type="text"] { width:0; min-width:0; flex:1 1 0; }
+        .mod-pills { max-width:100%; flex-wrap:wrap; }
+      }
+      dialog.contact-backdrop { margin:0; border:0; width:100%; height:100dvh; max-width:none; max-height:none; color:var(--ink); }
+      dialog.contact-backdrop::backdrop { background:transparent; }
     </style>
   </head>
   <body>
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute;pointer-events:none">
+      <defs>
+        <filter id="seal-red-ink" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0 0 0 0 0.611765  0 0 0 0 0.239216  0 0 0 0 0.164706  0 -1.314433 0 1.314433 0" />
+        </filter>
+      </defs>
+    </svg>
 
     <!-- ======== 建圈页（没有 ?b= 时） ======== -->
     <div id="createView" class="front" hidden>
@@ -1027,15 +1065,18 @@
       <nav class="topbar" aria-label="快捷入口">
         <span class="tb-brand hand">小圈子</span>
         <span class="tb-acts">
-          <button type="button" class="tb-btn" id="navMyBoards">我开过的板</button>
+          <button type="button" class="tb-btn" id="navMyBoards">最近访问</button>
           <button type="button" class="tb-btn" id="navJoin">进板</button>
         </span>
       </nav>
       <div class="front-box">
-        <img class="brand-seal" src="assets/logo-seal.jpg" alt="小圈子" />
+        <img class="brand-seal" src="/assets/logo-seal.jpg" alt="小圈子" />
         <h1 class="front-main">开一块黑板</h1>
         <svg class="wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true" style="margin-top:1.6rem"><path d="M2 7 Q 20 2 40 7 T 78 7 T 116 7 T 154 7 T 192 7 T 230 7 T 268 7 T 298 7"/></svg>
         <p class="ask">开一块黑板，<b>分享</b>给你的小圈子——<br />大家凭暗号进来，一起写满它。</p>
+        <nav class="entry-actions" aria-label="开始使用">
+          <a href="#joinBox">进板</a><a href="#templateZone">从模板创建</a>
+        </nav>
         <form id="createForm" class="front-form" novalidate>
           <div class="field">
             <label for="teamName">圈名 <span class="req">*</span></label>
@@ -1057,11 +1098,13 @@
           </div>
           <div class="field">
             <label for="memberCode">成员暗号</label>
-            <input type="text" id="memberCode" placeholder="不填则自动生成" maxlength="24" autocomplete="off" />
+            <input type="text" id="memberCode" aria-describedby="memberHelp" placeholder="不填则自动生成" maxlength="24" autocomplete="off" />
+            <p class="form-note" id="memberHelp">发给圈友，用来进板。</p>
           </div>
           <div class="field">
             <label for="hostCode">主理人暗号</label>
-            <input type="text" id="hostCode" placeholder="不填则自动生成" maxlength="24" autocomplete="off" />
+            <input type="text" id="hostCode" aria-describedby="hostHelp" placeholder="不填则自动生成" maxlength="24" autocomplete="off" />
+            <p class="form-note" id="hostHelp">用于管理黑板，请自己保管。</p>
           </div>
           <button type="submit" class="door-btn" id="createBtn">开一块黑板</button>
           <p class="form-msg" id="createMsg" role="status"></p>
@@ -1074,25 +1117,26 @@
           </div>
         </form>
 
-        <div class="tpl-box">
-          <p class="join-head">挑 个 模 板</p>
-          <div class="tpl-grid" id="tplGrid"></div>
-          <p class="form-note" style="text-align:center">点一个，配置都配好，直接开板。</p>
-        </div>
-
         <div class="join-box" id="myBoardsBox" hidden>
-          <p class="join-head">我开过的板</p>
+          <p class="join-head">最近访问</p>
+          <p class="form-note" style="text-align:center">本机记录</p>
           <div id="myBoardsList"></div>
           <p class="form-msg" id="myBoardsMsg" role="status"></p>
         </div>
 
-        <div class="join-box">
+        <div class="join-box" id="joinBox">
           <p class="join-head">进板</p>
           <div class="link-box">
             <input type="text" id="joinRef" placeholder="粘贴邀请语或板编号" aria-label="邀请语或板编号" autocomplete="off" />
             <button type="button" class="copy-btn" id="joinBtn">进 板</button>
           </div>
           <p class="form-msg" id="joinMsg" role="status"></p>
+        </div>
+
+        <div class="tpl-box">
+          <p class="join-head">选 个 模 板</p>
+          <div id="templateZone" aria-hidden="true"></div><div class="tpl-grid" id="tplGrid"></div>
+          <p class="form-note" style="text-align:center">选好模板，再填写圈名。</p>
         </div>
 
         <div id="createResult" hidden>
@@ -1117,10 +1161,10 @@
           <p class="enter-line"><a id="enterNewBoard" href="#">进 入 这 块 板</a></p>
         </div>
 
-        <p class="foot-sign">用着喜欢，<button type="button" class="sign-link" id="tipToggle" aria-expanded="false">请掌柜喝杯咖啡</button><span class="sign-dot" aria-hidden="true"> · </span><button type="button" class="sign-link contact-open">联系掌柜</button></p>
+        <p class="foot-sign">用着喜欢，<button type="button" class="sign-link tip-toggle" id="tipToggle" aria-controls="tipPanel" aria-expanded="false">请掌柜喝杯咖啡</button><span class="sign-dot" aria-hidden="true"> · </span><button type="button" class="sign-link contact-open">联系掌柜</button></p>
         <div class="tip-panel" id="tipPanel" hidden>
           <p class="tip-words">金额随意，心意领了</p>
-          <img class="tip-qr-img" src="assets/zelle-qr.jpg" alt="掌柜的 Zelle 收款码" />
+          <img class="tip-qr-img" src="/assets/zelle-qr.jpg" alt="掌柜的 Zelle 收款码" />
           <p class="tip-cap">长按图片，用银行 App 扫码</p>
         </div>
 
@@ -1133,7 +1177,7 @@
       <span class="side-word r">一块黑板 · 大家共写</span>
       <div class="front-box">
         <p class="back-line"><button type="button" class="mini-btn" id="cloneBack">← 回首页</button></p>
-        <img class="brand-seal" src="assets/logo-seal.jpg" alt="小圈子" />
+        <img class="brand-seal" src="/assets/logo-seal.jpg" alt="小圈子" />
         <h1 class="team-name" id="cloneTplName">模板</h1>
         <p class="clone-mods" id="cloneTplDesc"></p>
         <form id="cloneForm" class="front-form" novalidate>
@@ -1209,10 +1253,15 @@
 
     <!-- ======== 板内 ======== -->
     <main id="board" hidden>
+      <nav class="section-nav wrap" aria-label="圈内导航">
+        <a href="#gathering">黑板</a><a href="#wishBoard" data-module="wish">许愿池</a>
+        <a href="#drinksSection" data-module="drink">酒水单</a><a href="#fundSection" data-module="fund">基金池</a>
+        <a href="/">首页 · 换圈子</a>
+      </nav>
       <header class="hero wrap">
         <div class="top-row">
           <span class="only-wide">小圈子 · XIAO QUAN ZI</span>
-          <span class="mid"><img class="brand-seal in-row" src="assets/logo-seal.jpg" alt="小圈子" /></span>
+          <span class="mid"><img class="brand-seal in-row" src="/assets/logo-seal.jpg" alt="小圈子" /></span>
           <span class="only-wide">三五知己 · 一块黑板</span>
         </div>
         <h1 id="teamTitle">小圈子</h1>
@@ -1484,18 +1533,23 @@
       </section>
 
       <footer class="site wrap">
-        <img class="brand-seal in-foot" src="assets/logo-seal.jpg" alt="小圈子" />
+        <img class="brand-seal in-foot" src="/assets/logo-seal.jpg" alt="小圈子" />
         <p class="f1 hand">三五知己 · 一个小圈子</p>
         <p>小 圈 子 · XIAO QUAN ZI</p>
         <p>分享给新朋友：板编号发过去，凭暗号进门。</p>
         <p>一块黑板，一个小圈子。</p>
-        <p class="foot-sign">用着喜欢，请掌柜喝杯咖啡<span class="sign-dot" aria-hidden="true"> · </span><button type="button" class="sign-link contact-open">联系掌柜</button></p>
+        <p class="foot-sign">用着喜欢，<button type="button" class="sign-link tip-toggle" id="boardTipToggle" aria-controls="boardTipPanel" aria-expanded="false">请掌柜喝杯咖啡</button><span class="sign-dot" aria-hidden="true"> · </span><button type="button" class="sign-link contact-open">联系掌柜</button></p>
+        <div class="tip-panel" id="boardTipPanel" hidden>
+          <p class="tip-words">金额随意，心意领了</p>
+          <img class="tip-qr-img" src="/assets/zelle-qr.jpg" alt="掌柜的 Zelle 收款码" />
+          <p class="tip-cap">长按保存图片，在银行 App 中识别收款码</p>
+        </div>
       </footer>
     </main>
 
     <!-- ======== 联系掌柜（留言浮层） ======== -->
-    <div class="contact-backdrop" id="contactBackdrop" hidden>
-      <div class="contact-sheet" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <dialog class="contact-backdrop" id="contactBackdrop" aria-labelledby="contactTitle" hidden>
+      <div class="contact-sheet">
         <div class="contact-head">
           <h2 id="contactTitle">联系掌柜</h2>
           <button type="button" class="contact-x" id="contactClose" aria-label="关闭">×</button>
@@ -1517,7 +1571,7 @@
           <p class="form-msg" id="contactStatus" role="status"></p>
         </form>
       </div>
-    </div>
+    </dialog>
     <div class="toast" id="contactToast" role="status" hidden></div>
 
     <script>
@@ -1572,13 +1626,13 @@
             });
           });
         }
-        /* 验暗号：返回 "host" / "member" / "none" */
+        /* 验暗号：返回身份、无效暗号或服务不可用，网络错误不授予权限 */
         function verifyCode(bid, code) {
           code = String(code || "").trim();
           if (!bid || !code) return Promise.resolve("none");
           return sbRpc("verify_board_code", { p_board_id: bid, p_code: code })
             .then(function (v) { return (v === "host" || v === "member") ? v : "none"; })
-            .catch(function () { return "none"; });
+            .catch(function () { return "unavailable"; });
         }
         /* 两个暗号只存本机 localStorage（key 带 boardId），不再进 __meta */
         function codesKey(bid) { return "xqz_codes_" + bid; }
@@ -1656,6 +1710,11 @@
             try { BID = decodeURIComponent(hashMatch[1]).trim(); } catch (e) { BID = String(hashMatch[1]).trim(); }
           }
         }
+        function boardIdFromPath(pathname) {
+          var m = /^\/([A-Za-z0-9]{4,16})\/?$/.exec(pathname);
+          return m && m[1] !== "assets" ? m[1] : "";
+        }
+        if (!BID) BID = boardIdFromPath(location.pathname);
         var ROW = null; // 进板后才定：{meta, cur, wish, fund}
 
         /* ================= 建圈模式 ================= */
@@ -1706,7 +1765,7 @@
           r.setProperty("--field", s.field);
           r.setProperty("--ink", s.ink);
           r.setProperty("--ink-soft", s.soft);
-          r.setProperty("--ink-faint", s.faint);
+          r.setProperty("--ink-faint", s.soft);
           r.setProperty("--accent", s.accent);
           r.setProperty("--accent-soft", hexRgba(s.accent, 0.12));
           r.setProperty("--terra", s.terra);
@@ -1739,7 +1798,7 @@
           renderMyBoards();
         }
 
-        /* ---------- 我开过的板（本机清单；进过的也记，方便回访） ---------- */
+        /* ---------- 最近访问（本机清单；进过的也记，方便回访） ---------- */
         var MYBOARDS_KEY = "xqz_myboards";
         function myBoards() {
           var a = lsGet(MYBOARDS_KEY, []);
@@ -1752,9 +1811,11 @@
           list.forEach(function (b) { if (b.bid === bid) found = b; });
           if (found) {
             found.name = name;
+            found.at = Date.now();
             if (role && (role === "host" || !found.role)) found.role = role;
           }
           else { list.unshift({ bid: bid, name: name, at: Date.now(), role: role || "" }); }
+          list.sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
           if (list.length > 20) list.length = 20;
           lsSet(MYBOARDS_KEY, list);
           if (!$("createView").hidden) renderMyBoards();
@@ -1814,38 +1875,33 @@
             var dt = document.createElement("span");
             dt.className = "myboard-date";
             var d = new Date(b.at || Date.now());
-            dt.textContent = (d.getMonth() + 1) + "月" + d.getDate() + "日";
+            dt.textContent = (b.role === "host" ? "主理人 · " : b.role === "member" ? "成员 · " : "") + (d.getMonth() + 1) + "月" + d.getDate() + "日";
             var btn = document.createElement("button");
             btn.type = "button";
             btn.className = "mini-btn";
-            btn.textContent = "进板";
+            btn.textContent = "打开";
             btn.addEventListener("click", function () { goBoard(b.bid, b.role || null); });
-            /* 删/移除：自己开的删整块板（二次确认），进过的只清本地记录 */
             var act = document.createElement("button");
             act.type = "button";
-            act.className = "mini-btn";
-            if (b.role === "host") {
-              act.textContent = "删除";
-              act.setAttribute("aria-label", "删除板「" + b.name + "」");
-              (function (bb, ab) {
-                ab.addEventListener("click", function () { deleteMyBoard(bb, ab); });
-              })(b, act);
-            } else {
-              act.textContent = "移除";
-              act.setAttribute("aria-label", "从本机记录移除「" + b.name + "」");
-              (function (bb) {
-                act.addEventListener("click", function () {
-                  forgetBoard(bb.bid);
-                  renderMyBoards();
-                  var m = $("myBoardsMsg");
-                  if (m) m.textContent = "已从本机记录里移除。";
-                });
-              })(b);
-            }
-            row.appendChild(nm);
-            row.appendChild(dt);
-            row.appendChild(btn);
-            row.appendChild(act);
+            act.className = "mini-btn myboard-remove";
+            act.textContent = "移除";
+            act.setAttribute("aria-label", "从本机记录移除「" + b.name + "」，保留黑板内容");
+            act.addEventListener("click", function () {
+              forgetBoard(b.bid);
+              renderMyBoards();
+              var m = $("myBoardsMsg");
+              if (m) m.textContent = "已移除本机记录，黑板内容保留。";
+            });
+            var info = document.createElement("div");
+            info.className = "myboard-info";
+            info.appendChild(nm);
+
+            var actions = document.createElement("div");
+            actions.className = "myboard-actions";
+            actions.appendChild(btn);
+            actions.appendChild(act);
+            row.appendChild(info);
+            row.appendChild(actions);
             listEl.appendChild(row);
           });
         }
@@ -1973,7 +2029,9 @@
         $("copyLinkBtn").addEventListener("click", function () {
           var cm = $("copyMsg");
           var lc0 = getLocalCodes(createdBid);
-          var msg = "「小圈子」板号 " + createdBid + " · 暗号 " + ((lc0 && lc0.member) || $("showMemberCode").textContent);
+          var memberCode = (lc0 && lc0.member) || $("showMemberCode").textContent;
+          var link = directLink(createdBid, memberCode);
+          var msg = "「小圈子」板号 " + createdBid + " · 暗号 " + memberCode + (link ? " · 直链 " + link : "");
           function done() { cm.textContent = "邀请复制好了，发到群里。"; }
           function fallback() {
             var ta = document.createElement("textarea");
@@ -2063,7 +2121,7 @@
           ctx.save();
           ctx.translate(W - 168, H - 138);
           ctx.rotate(-0.05);
-          ctx.fillStyle = skin.accent;
+          ctx.fillStyle = "#9c3d2a";
           var hs = 46;
           ctx.beginPath();
           if (ctx.roundRect) ctx.roundRect(-hs, -hs, hs * 2, hs * 2, 8); else ctx.rect(-hs, -hs, hs * 2, hs * 2);
@@ -2159,20 +2217,12 @@
         });
         $("joinBtn").addEventListener("click", function () {
           var raw = $("joinRef").value;
-          if (raw.trim() === "qjdy") {
-            var fallbackUrl = "https://muse.ai/s/private-club-uxd5xmsfxfxuxmgs";
-            fetch("./qjdy/", { method: "HEAD" }).then(function (res) {
-              window.location.href = res && res.ok ? "./qjdy/" : fallbackUrl;
-            }, function () {
-              window.location.href = fallbackUrl;
-            });
-            return;
-          }
           var ref = parseBoardRef(raw);
           var jm = $("joinMsg");
           if (!ref) { jm.textContent = "先粘邀请语或板编号。"; $("joinRef").focus(); return; }
           jm.textContent = "";
           pendingLinkCode = parseLinkCode(raw);
+          if (ref === "qjdy") { window.location.href = directLink(ref, pendingLinkCode); return; }
           goBoard(ref, null);
         });
         $("joinRef").addEventListener("keydown", function (e) {
@@ -2180,11 +2230,13 @@
         });
 
         /* ---------- 打赏面板：点开/收起 ---------- */
-        $("tipToggle").addEventListener("click", function () {
-          var p = $("tipPanel");
-          var open = p.hidden;
-          p.hidden = !open;
-          this.setAttribute("aria-expanded", open ? "true" : "false");
+        document.querySelectorAll(".tip-toggle").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var panel = $(button.getAttribute("aria-controls"));
+            panel.hidden = !panel.hidden;
+            button.setAttribute("aria-expanded", String(!panel.hidden));
+            if (!panel.hidden) panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+          });
         });
 
         /* ---------- 顶部常驻入口 ---------- */
@@ -2199,8 +2251,10 @@
           if (myBoards().length) {
             $("myBoardsBox").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
           } else {
-            $("createMsg").textContent = "这台设备上还没开过板。";
-            window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+            var box = $("myBoardsBox");
+            box.hidden = false;
+            $("myBoardsMsg").textContent = "这台设备还没有圈子记录。已有圈子请点进板，或在下面新建。";
+            box.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
           }
         });
 
@@ -2258,12 +2312,8 @@
         var cloneBusy = false;
 
         function directLink(bid, code) {
-          try {
-            var p = location.pathname || "";
-            if (!/\/s\/[^/]+/.test(p)) return "";
-            var base = (location.origin + p).replace(/\/+$/, "").replace(/\/index\.html$/, "");
-            return base + "?b=" + bid + (code ? "&c=" + encodeURIComponent(code) : "");
-          } catch (e) { return ""; }
+          if (!/^https?:$/.test(location.protocol) || !/^[A-Za-z0-9]{4,16}$/.test(bid)) return "";
+          return location.origin + "/" + encodeURIComponent(bid) + "/" + (code ? "?c=" + encodeURIComponent(code) : "");
         }
         function openClone(t) {
           cloneTpl = t;
@@ -2344,7 +2394,7 @@
             $("cloneMemberShow").textContent = member;
             $("cloneHostShow").textContent = host;
             $("cloneSkinLine").textContent = "「" + name + "」· " + ((skinByCode(res.meta.skin) || {}).name || "") + "气质。";
-            $("cloneLink").textContent = directLink(res.bid, res.codes.member) || ("本站链接 + ?b=" + res.bid);
+            $("cloneLink").textContent = directLink(res.bid, res.codes.member) || ("本站链接/" + res.bid + "/");
             $("cloneForm").hidden = true;
             $("cloneResult").hidden = false;
             $("cloneResult").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
@@ -2375,8 +2425,8 @@
         $("cloneCopyLink").addEventListener("click", function () {
           if (!cloneBid) return;
           var link = directLink(cloneBid, cloneMemberCode());
-          copyText(link || ("本站链接 + ?b=" + cloneBid),
-            function () { $("cloneCopyMsg").textContent = link ? "直链复制好了。" : "规则复制好了：本站链接后加 ?b=板号。"; },
+          copyText(link || ("本站链接/" + cloneBid + "/"),
+            function () { $("cloneCopyMsg").textContent = link ? "直链复制好了。" : "规则复制好了：本站链接后加 /板号/。"; },
             function () { $("cloneCopyMsg").textContent = "没复制上，手动记下板编号。"; });
         });
         $("cloneSwapMember").addEventListener("click", function () {
@@ -2463,6 +2513,12 @@
           if (m) {
             try { return decodeURIComponent(m[1]).trim(); } catch (e) { return m[1].trim(); }
           }
+          if (/^(https?:\/\/|\/)/i.test(t)) {
+            try {
+              var pathBid = boardIdFromPath(new URL(t, location.origin).pathname);
+              if (pathBid) return pathBid;
+            } catch (e) { /* 继续按邀请语解析 */ }
+          }
           var bm = /板号\s*[:：]?\s*([A-Za-z0-9]{4,16})/.exec(t);
           if (bm) return bm[1];
           return t.replace(/\s+/g, "");
@@ -2518,8 +2574,8 @@
             var pcode = lc ? (pr === "host" ? lc.host : lc.member) : "";
             if (pcode) {
               verifyCode(BID, pcode).then(function (role) {
-                if (role !== "none") enterBoard(role, true, pcode);
-                else showGate();
+                if ((role === "host" || role === "member")) enterBoard(role, true, pcode);
+                else { showGate(); if (role === "unavailable") gateUnavailable(); }
               });
             } else {
               showGate();
@@ -2530,8 +2586,8 @@
           if (linkCode) {
             pendingLinkCode = "";
             verifyCode(BID, linkCode).then(function (role) {
-              if (role !== "none") enterBoard(role, true, linkCode);
-              else showGate();
+              if ((role === "host" || role === "member")) enterBoard(role, true, linkCode);
+              else { showGate(); if (role === "unavailable") gateUnavailable(); }
             });
             return;
           }
@@ -2553,7 +2609,8 @@
             (function next(i) {
               if (i >= tryCodes.length) { showGate(); return; }
               verifyCode(BID, tryCodes[i]).then(function (role) {
-                if (role !== "none") enterBoard(role, true, tryCodes[i]);
+                if ((role === "host" || role === "member")) enterBoard(role, true, tryCodes[i]);
+                else if (role === "unavailable") gateUnavailable();
                 else next(i + 1);
               });
             })(0);
@@ -2584,6 +2641,10 @@
           setTimeout(open, reduceMotion ? 60 : 950);
         }
 
+        function gateUnavailable() {
+          showGate();
+          $("gateMsg").textContent = "暂时联系不上，请检查网络后再推门。";
+        }
         var gateTries = 0;
         var wrongLines = [
           "暗号不对。",
@@ -2603,9 +2664,11 @@
           verifyCode(BID, code).then(function (role) {
             gateBusy = false;
             btn.disabled = false;
-            if (role !== "none") {
+            if ((role === "host" || role === "member")) {
               $("gateMsg").textContent = "";
               enterBoard(role, false, code);
+            } else if (role === "unavailable") {
+              gateUnavailable();
             } else {
               $("gateMsg").textContent = wrongLines[Math.min(gateTries, wrongLines.length - 1)];
               gateTries++;
@@ -2721,6 +2784,7 @@
           return "";
         }
         function applyModules() {
+          document.querySelectorAll(".section-nav [data-module]").forEach(function (link) { link.hidden = !modOn(link.dataset.module); });
           $("wishBoard").hidden = !modOn("wish");
           $("drinksSection").hidden = !modOn("drink");
           $("fundSection").hidden = !modOn("fund");
@@ -2865,20 +2929,14 @@
             fallback();
           }
         }
-        // 公开链接 + ?b=板号：已发布时地址形如 /s/<…>，预览地址不是这个样子，直链先空着
+        // 统一邀请直链：/板号/，同时兼容旧的 ?b= 和 #b= 链接
         // 成员暗号只从本机 localStorage 读；这台手机上没存，就提示去创建手机看
         function localMemberCode() {
           var lc = getLocalCodes(BID);
           return (lc && lc.member) || "";
         }
         function inviteLink() {
-          try {
-            var p = location.pathname || "";
-            if (!/\/s\/[^/]+/.test(p)) return "";
-            var base = (location.origin + p).replace(/\/+$/, "").replace(/\/index\.html$/, "");
-            var mc = localMemberCode();
-            return base + "?b=" + BID + (mc ? "&c=" + encodeURIComponent(mc) : "");
-          } catch (e) { return ""; }
+          return directLink(BID, localMemberCode());
         }
         function renderInvite() {
           if (!META) return;
@@ -4748,19 +4806,19 @@
           });
         });
         /* ---------- 付款码：没传时是占位图，传了直接展示真码 ---------- */
-        var QR_SVG = '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" fill="none" stroke="rgba(38,34,28,0.35)" stroke-width="1.5"/><g fill="rgba(38,34,28,0.55)"><rect x="12" y="12" width="20" height="20"/><rect x="68" y="12" width="20" height="20"/><rect x="12" y="68" width="20" height="20"/></g><g fill="#F7F2E6"><rect x="17" y="17" width="10" height="10"/><rect x="73" y="17" width="10" height="10"/><rect x="17" y="73" width="10" height="10"/></g><g fill="rgba(38,34,28,0.4)"><rect x="44" y="12" width="6" height="6"/><rect x="54" y="20" width="6" height="6"/><rect x="44" y="30" width="6" height="6"/><rect x="12" y="44" width="6" height="6"/><rect x="24" y="52" width="6" height="6"/><rect x="38" y="44" width="6" height="6"/><rect x="52" y="52" width="6" height="6"/><rect x="66" y="44" width="6" height="6"/><rect x="80" y="52" width="6" height="6"/><rect x="44" y="68" width="6" height="6"/><rect x="58" y="76" width="6" height="6"/><rect x="76" y="68" width="6" height="6"/><rect x="84" y="80" width="6" height="6"/></g><text x="50" y="54" text-anchor="middle" font-family="serif" font-size="11" fill="rgba(38,34,28,0.6)">待放码</text></svg>';
         function payPlaceholder(label) {
           var d = document.createElement("div");
           d.className = "fund-pay";
           var qd = document.createElement("div");
           qd.className = "fund-qr";
-          qd.innerHTML = QR_SVG;
+          qd.className = "payment-empty";
+          qd.textContent = "尚未配置收款码";
           var cap = document.createElement("p");
           cap.className = "cap";
           cap.textContent = label + " 付款码";
           var note = document.createElement("p");
           note.className = "note";
-          note.textContent = "码还没放上来";
+          note.textContent = isHost ? "请在下方上传付款码" : "请联系主理人提供收款方式";
           d.appendChild(qd);
           d.appendChild(cap);
           d.appendChild(note);
@@ -4818,7 +4876,8 @@
             img.alt = "付款码预览";
             qd.appendChild(img);
           } else {
-            qd.innerHTML = QR_SVG;
+            qd.className = "payment-empty";
+          qd.textContent = "尚未配置收款码";
           }
           slot.appendChild(qd);
           var lab = document.createElement("input");
@@ -4953,7 +5012,7 @@
             contactMsgEl = $("contactMsg"), contactEmailEl = $("contactEmail"),
             contactBotEl = $("contactBotcheck"), contactSendBtn = $("contactSend"),
             contactStatusEl = $("contactStatus"), contactToast = $("contactToast"),
-            contactOpenedAt = 0, toastTimer = null, waitTimer = null;
+            contactOpenedAt = 0, toastTimer = null, waitTimer = null, contactTrigger = null, contactBackground = [];
         function showToast(text, ms) {
           contactToast.textContent = text;
           contactToast.hidden = false;
@@ -4977,17 +5036,27 @@
             if (waitTimer) { clearTimeout(waitTimer); waitTimer = null; }
           }
         }
-        function openContact() {
+        function openContact(ev) {
+          contactTrigger = ev && ev.currentTarget ? ev.currentTarget : document.activeElement;
+          contactBackground = Array.prototype.map.call(document.body.children, function (el) { return { el: el, inert: el.inert }; });
+          if (typeof contactBackdrop.showModal !== "function") {
+            contactBackground.forEach(function (item) { if (item.el !== contactBackdrop && item.el !== contactToast) item.el.inert = true; });
+          }
           contactOpenedAt = Date.now();
           contactStatusEl.textContent = "";
           contactBackdrop.hidden = false;
+          if (typeof contactBackdrop.showModal === "function" && !contactBackdrop.open) contactBackdrop.showModal();
           document.body.style.overflow = "hidden";
           refreshContactWait();
           setTimeout(function () { contactMsgEl.focus(); }, 60);
         }
         function closeContact() {
+          if (contactBackdrop.open && typeof contactBackdrop.close === "function") contactBackdrop.close();
           contactBackdrop.hidden = true;
+          contactBackground.forEach(function (item) { item.el.inert = item.inert; });
+          contactBackground = [];
           document.body.style.overflow = "";
+          if (contactTrigger && contactTrigger.isConnected) contactTrigger.focus({ preventScroll: true });
           if (waitTimer) { clearTimeout(waitTimer); waitTimer = null; }
         }
         function contactDone() {
@@ -5003,19 +5072,26 @@
         Array.prototype.forEach.call(document.querySelectorAll(".contact-open"), function (btn) {
           btn.addEventListener("click", openContact);
         });
+        contactBackdrop.addEventListener("cancel", function (ev) { ev.preventDefault(); closeContact(); });
         $("contactClose").addEventListener("click", closeContact);
         contactBackdrop.addEventListener("click", function (ev) { if (ev.target === contactBackdrop) closeContact(); });
         document.addEventListener("keydown", function (ev) {
-          if (ev.key === "Escape" && !contactBackdrop.hidden) closeContact();
+          if (contactBackdrop.hidden) return;
+          if (ev.key === "Escape") { ev.preventDefault(); closeContact(); return; }
+          if (ev.key === "Tab") {
+            var fields = Array.prototype.filter.call(contactBackdrop.querySelectorAll("button, input, textarea, a[href]"), function (el) { return !el.disabled && el.tabIndex >= 0 && el.getClientRects().length; });
+            var first = fields[0], last = fields[fields.length - 1];
+            if (!first) { ev.preventDefault(); return; }
+            if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+            else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+          }
         });
         contactForm.addEventListener("submit", function (ev) {
           ev.preventDefault();
           var msg = contactMsgEl.value.trim();
           if (!msg) { contactStatusEl.textContent = "先把遇到的问题写下来吧。"; contactMsgEl.focus(); return; }
           /* 防 spam 一层：botcheck 蜜罐被勾了 = 机器人，静默丢弃不上报（装作发送成功） */
-          if (contactBotEl.checked) { contactDone(); return; }
-          /* 防 spam 二层：浮层打开不到 3 秒就提交 = 机器人，静默丢弃 */
-          if (Date.now() - contactOpenedAt < 3000) { contactDone(); return; }
+          if (contactBotEl.checked) { contactStatusEl.textContent = "无法发送，请重试。"; return; }
           /* 防 spam 三层：同一浏览器 60 秒内只许提交一次 */
           if (contactWaitLeft() > 0) { contactStatusEl.textContent = "稍后再试"; return; }
           contactSendBtn.disabled = true;
@@ -5035,15 +5111,19 @@
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify(payload)
           }).then(function (r) {
-            if (r.ok) { contactDone(); }
-            else { lsSet("xqz:contact:last", 0); contactStatusEl.textContent = "发送失败，请稍后再试"; contactSendBtn.disabled = false; }
-          }, function () {
+            return r.json().then(function (data) {
+              if (r.ok && data && data.success === true) contactDone();
+              else throw new Error("not-sent");
+            });
+          }).catch(function () {
             lsSet("xqz:contact:last", 0); contactStatusEl.textContent = "发送失败，请稍后再试"; contactSendBtn.disabled = false;
           });
         });
 
         /* ---------- 启动 ---------- */
-        if (BID) {
+        if (BID === "qjdy") {
+          window.location.replace(directLink(BID, LINKCODE));
+        } else if (BID) {
           ROW = { meta: BID + "__meta", cur: BID + "__current", wish: BID + "__wishes", drink: BID + "__drinks", fund: BID + "__fund" };
           loadMeta();
         } else {
