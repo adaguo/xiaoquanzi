@@ -2160,7 +2160,12 @@
         $("joinBtn").addEventListener("click", function () {
           var raw = $("joinRef").value;
           if (raw.trim() === "qjdy") {
-            window.location.href = "https://muse.ai/s/private-club-uxd5xmsfxfxuxmgs";
+            var fallbackUrl = "https://muse.ai/s/private-club-uxd5xmsfxfxuxmgs";
+            fetch("./qjdy/", { method: "HEAD" }).then(function (res) {
+              window.location.href = res && res.ok ? "./qjdy/" : fallbackUrl;
+            }, function () {
+              window.location.href = fallbackUrl;
+            });
             return;
           }
           var ref = parseBoardRef(raw);

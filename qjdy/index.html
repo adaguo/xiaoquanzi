@@ -1,0 +1,3017 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>乔家大院 Private Club</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --paper: #ece3cf;
+        --paper-2: #f5eedd;
+        --card: #f9f4e5;
+        --ink: #2f2a20;
+        --ink-soft: #71634e;
+        --ink-faint: #9a8a6e;
+        --accent: #9c3d2a;
+        --accent-soft: rgba(156, 61, 42, 0.12);
+        --moss: #5c6b4a;
+        --line: rgba(47, 42, 32, 0.22);
+        --line-strong: rgba(47, 42, 32, 0.45);
+        --field: #fbf7ec;
+        --shadow: 0 18px 40px rgba(58, 46, 28, 0.16);
+        --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+        --hand: "Ma Shan Zheng", "Noto Serif SC", cursive;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #16140f;
+          --paper-2: #1d1a13;
+          --card: #211d15;
+          --ink: #eadfc6;
+          --ink-soft: #b3a586;
+          --ink-faint: #7d7057;
+          --accent: #d0876a;
+          --accent-soft: rgba(208, 135, 106, 0.16);
+          --moss: #a3b184;
+          --line: rgba(234, 223, 198, 0.2);
+          --line-strong: rgba(234, 223, 198, 0.42);
+          --field: #26221a;
+          --shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+      body {
+        margin: 0;
+        font-family: var(--serif);
+        color: var(--ink);
+        background-color: var(--paper);
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.055 0"/></filter><rect width="180" height="180" filter="url(%23n)"/></svg>');
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection { background: var(--accent-soft); }
+
+      /* ---------- 通用小件 ---------- */
+      .wrap { width: min(1060px, 100% - 2.5rem); margin-inline: auto; }
+      .hand { font-family: var(--hand); font-weight: 400; }
+      .seal {
+        display: inline-grid; place-items: center;
+        width: 2rem; height: 2rem; flex: none;
+        background: var(--accent); color: #f7efdd;
+        font-family: var(--hand); font-size: 1.25rem; line-height: 1;
+        border-radius: 5px 2px 6px 3px;
+        transform: rotate(-3deg);
+        box-shadow: inset 0 0 0 1.5px rgba(247, 239, 221, 0.55);
+      }
+      .wave { display: block; width: min(340px, 70%); height: 12px; margin: 0 auto; }
+      .wave path { fill: none; stroke: var(--ink-faint); stroke-width: 2; stroke-linecap: round; }
+
+      .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.9s ease, transform 0.9s ease; }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
+      section { padding: clamp(3.5rem, 9vw, 6.5rem) 0 0; }
+      .sec-head { text-align: center; margin-bottom: clamp(1.8rem, 5vw, 3rem); }
+      .sec-head .no {
+        font-size: 0.8rem; letter-spacing: 0.5em; text-indent: 0.5em;
+        color: var(--ink-faint); margin: 0 0 0.4rem;
+      }
+      .sec-head h2 {
+        font-family: var(--hand); font-weight: 400;
+        font-size: clamp(2.1rem, 6vw, 3rem); margin: 0; line-height: 1.25;
+      }
+      .sec-head .sub { color: var(--ink-soft); margin: 0.5rem auto 0; max-width: 34em; font-size: 0.98rem; }
+      .sec-head .wave { margin-top: 1.1rem; }
+
+      /* ---------- 门 · 暗号 ---------- */
+      #gate {
+        min-height: 100svh; display: grid; place-items: center;
+        padding: 2rem 1.25rem; position: relative; overflow: hidden;
+        transition: opacity 1s ease;
+      }
+      #gate.leaving { opacity: 0; pointer-events: none; }
+      #gate .side-word {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        writing-mode: vertical-rl; letter-spacing: 0.55em;
+        color: var(--ink-faint); font-size: 0.85rem; user-select: none;
+      }
+      #gate .side-word.l { left: max(1rem, 6vw); }
+      #gate .side-word.r { right: max(1rem, 6vw); }
+      @media (max-width: 560px) { #gate .side-word { display: none; } }
+      .gate-box { text-align: center; max-width: 30rem; width: 100%; }
+      .gate-box .pre {
+        letter-spacing: 0.55em; text-indent: 0.55em; font-size: 0.78rem;
+        color: var(--ink-faint); margin: 0 0 1.2rem;
+      }
+      .gate-box h1 {
+        font-family: var(--hand); font-weight: 400;
+        font-size: clamp(3.4rem, 14vw, 5.6rem); line-height: 1.1; margin: 0;
+      }
+      .gate-box .en { letter-spacing: 0.42em; text-indent: 0.42em; font-size: 0.8rem; color: var(--ink-soft); margin: 0.9rem 0 0; }
+      .gate-box .ask { margin: 2.6rem 0 0; color: var(--ink-soft); font-size: 1rem; }
+      .gate-box .ask b { color: var(--ink); font-weight: 700; }
+      #gateForm { margin-top: 1.4rem; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+      #codeInput {
+        width: min(19rem, 84vw); text-align: center;
+        font-family: var(--serif); font-size: 1.3rem; letter-spacing: 0.45em; text-indent: 0.45em;
+        padding: 0.85rem 0.5rem; color: var(--ink);
+        background: transparent; border: none; border-bottom: 1.5px solid var(--line-strong);
+        outline: none; border-radius: 0;
+      }
+      #codeInput:focus { border-bottom-color: var(--accent); }
+      #codeInput::placeholder { letter-spacing: 0.3em; color: var(--ink-faint); font-size: 1.05rem; }
+      .door-btn {
+        font-family: var(--hand); font-size: 1.35rem; letter-spacing: 0.35em; text-indent: 0.35em;
+        color: var(--ink); background: transparent; cursor: pointer;
+        border: 1.5px solid var(--line-strong); padding: 0.7rem 2.4rem 0.55rem;
+        border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+        transition: border-color 0.3s, color 0.3s, background 0.3s;
+      }
+      .door-btn:hover, .door-btn:focus-visible { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+      #gateMsg { min-height: 1.6em; margin: 0; color: var(--accent); font-size: 0.92rem; }
+      .gate-box .hint { margin-top: 2.2rem; font-size: 0.82rem; color: var(--ink-faint); letter-spacing: 0.12em; }
+      @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(3px); } 30%, 50%, 70% { transform: translateX(-5px); } 40%, 60% { transform: translateX(5px); } }
+      .shake { animation: shake 0.55s ease both; }
+      @media (prefers-reduced-motion: reduce) { .shake { animation: none; } }
+
+      /* ---------- 院内 ---------- */
+      #club[hidden] { display: none; }
+      .hero { padding: clamp(2.2rem, 6vw, 4rem) 0 0; text-align: center; position: relative; }
+      .hero .top-row {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 0.78rem; letter-spacing: 0.3em; color: var(--ink-soft);
+        border-bottom: 1px solid var(--line); padding-bottom: 0.9rem;
+      }
+      .hero .top-row .mid { display: flex; align-items: center; gap: 0.6rem; letter-spacing: 0.2em; }
+      @media (max-width: 560px) { .hero .top-row .only-wide { display: none; } }
+      .hero h1 {
+        font-family: var(--hand); font-weight: 400;
+        font-size: clamp(3.6rem, 15vw, 7rem); line-height: 1.08; margin: clamp(1.6rem, 5vw, 2.6rem) 0 0;
+      }
+      .hero .tagline { font-size: clamp(1.02rem, 3.4vw, 1.2rem); color: var(--ink-soft); margin: 1rem auto 0; max-width: 36em; }
+      .hero .tagline b { color: var(--accent); font-weight: 700; }
+      .hero-fig { margin: clamp(1.8rem, 5vw, 3rem) auto 0; max-width: 880px; position: relative; }
+      .hero-fig img {
+        width: 100%; height: auto; display: block;
+        border-radius: 4px 40px 6px 34px / 34px 6px 40px 4px;
+        box-shadow: var(--shadow);
+      }
+      .hero-fig figcaption {
+        position: absolute; right: 1rem; bottom: 1rem;
+        writing-mode: vertical-rl; letter-spacing: 0.3em; font-size: 0.8rem;
+        color: #f3ead2; text-shadow: 0 1px 8px rgba(30, 20, 8, 0.65);
+        background: rgba(38, 30, 18, 0.28); padding: 0.7rem 0.35rem;
+        border-radius: 3px;
+      }
+      .hero nav {
+        display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6rem 2.4rem;
+        margin-top: clamp(1.8rem, 5vw, 2.6rem);
+      }
+      .hero nav a {
+        color: var(--ink); text-decoration: none; font-size: 1rem; letter-spacing: 0.18em;
+        padding-bottom: 0.25rem; border-bottom: 1px solid transparent;
+        transition: color 0.3s, border-color 0.3s;
+      }
+      .hero nav a:hover, .hero nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+      .hero nav a .n { font-family: var(--hand); color: var(--accent); margin-right: 0.35em; }
+
+      /* ---------- 手绘板（酒水单 / 菜单） ---------- */
+      .board {
+        background: var(--paper-2);
+        border: 1.5px solid var(--line-strong);
+        border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+        box-shadow: var(--shadow);
+        padding: clamp(1.6rem, 5vw, 3rem) clamp(1.2rem, 5vw, 3rem);
+        position: relative;
+      }
+      .board::before {
+        content: ""; position: absolute; inset: 9px;
+        border: 1px solid var(--line); pointer-events: none;
+        border-radius: 225px 10px 255px 10px / 10px 255px 10px 225px;
+      }
+      .board .board-title {
+        text-align: center; font-family: var(--hand); font-weight: 400;
+        font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 0 0 0.2rem;
+      }
+      .board .board-note { text-align: center; color: var(--ink-faint); font-size: 0.85rem; margin: 0 0 1.6rem; letter-spacing: 0.14em; }
+      .menu-group { margin-top: 1.8rem; }
+      .menu-group:first-of-type { margin-top: 0.6rem; }
+      .menu-group h3 {
+        font-family: var(--hand); font-weight: 400; font-size: 1.45rem;
+        color: var(--accent); margin: 0 0 0.7rem; display: flex; align-items: center; gap: 0.7rem;
+      }
+      .menu-group h3::after { content: ""; flex: 1; border-bottom: 1.5px solid var(--line); }
+      .mi { padding: 0.42rem 0; }
+      .mi .row { display: flex; align-items: baseline; }
+      .mi .name { font-size: 1.08rem; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+      .mi .dots { flex: 1; min-width: 1.6rem; border-bottom: 2px dotted var(--line-strong); margin: 0 0.6rem; transform: translateY(-4px); }
+      .mi .price { font-family: var(--hand); font-size: 1.3rem; color: var(--accent); white-space: nowrap; }
+      .mi .desc { color: var(--ink-soft); font-size: 0.9rem; margin: 0.1rem 0 0; max-width: 40em; }
+      .board .foot-note { text-align: center; margin: 2rem 0 0; color: var(--ink-faint); font-size: 0.85rem; letter-spacing: 0.1em; }
+
+      /* ---------- 酒水单：主理人增删改（成员只看，手绘单样式不变） ---------- */
+      .drink-empty { text-align: center; color: var(--ink-faint); font-size: 0.92rem; margin: 0.6rem 0 0; }
+      .drink-acts { display: flex; gap: 1.1rem; margin-top: 0.1rem; }
+      .drink-act {
+        font-family: var(--serif); font-size: 0.82rem; cursor: pointer;
+        color: var(--ink-faint); background: transparent; border: none; padding: 0.1rem 0;
+      }
+      .drink-act:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+      .drink-act.armed { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+      .drink-hostbar { text-align: center; margin-top: 1.6rem; }
+      .drink-add {
+        font-family: var(--serif); font-size: 0.92rem; cursor: pointer; color: var(--ink-soft);
+        background: transparent; border: 1.5px dashed var(--line-strong);
+        border-radius: 10px 3px 10px 3px; padding: 0.55rem 1.6rem;
+      }
+      .drink-add:hover { border-color: var(--accent); color: var(--accent); }
+      .drink-editor { padding: 0.42rem 0; }
+      .drink-editor input[type="text"] {
+        width: 100%; font-family: var(--serif); font-size: 1rem; color: var(--ink);
+        background: var(--field); border: 1px solid var(--line-strong);
+        border-radius: 10px 3px 10px 3px; padding: 0.55rem 0.75rem; outline: none; margin-bottom: 0.5rem;
+      }
+      .drink-editor input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .drink-editor .ed-acts { display: flex; gap: 0.6rem; }
+      .drink-save {
+        font-family: var(--serif); font-size: 0.88rem; cursor: pointer;
+        color: #f7efdd; background: var(--accent); border: 1.5px solid var(--accent);
+        border-radius: 6px 2px 6px 2px; padding: 0.35rem 1.1rem;
+      }
+
+      /* ---------- 拼好饭 ---------- */
+      .dinner-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(1.6rem, 5vw, 3rem); align-items: start; }
+      .dinner-grid > * { min-width: 0; }
+      @media (max-width: 860px) { .dinner-grid { grid-template-columns: 1fr; } }
+      .panel {
+        background: var(--card); border: 1.5px solid var(--line-strong);
+        border-radius: 16px 225px 18px 225px / 225px 18px 225px 16px;
+        padding: clamp(1.3rem, 4vw, 2rem);
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      /* 本期拼饭（主理人面板）：安静克制的细线风格，和小黑板统一 */
+      #hostPanel { border: 1px solid var(--line-strong); border-radius: 4px; }
+      #hostPanel .seal {
+        width: 1.8rem; height: 1.8rem; font-size: 1.1rem;
+        background: transparent; color: #B0714F;
+        border: 1.5px solid #B0714F; border-radius: 3px;
+        box-shadow: none;
+      }
+      #hostPanel input[type="text"], #hostPanel input[type="datetime-local"], #hostPanel textarea { border-radius: 4px; }
+      .panel h3 { font-family: var(--hand); font-weight: 400; font-size: 1.5rem; margin: 0 0 0.8rem; display: flex; align-items: center; gap: 0.6rem; }
+      .dinner-when { text-align: center; padding: 0.4rem 0 1rem; margin-bottom: 1.1rem; }
+      .dinner-when .d1 { font-family: var(--hand); font-size: clamp(2rem, 7vw, 2.7rem); line-height: 1.2; }
+      .dinner-when .d2 { color: var(--ink-soft); font-size: 0.92rem; margin-top: 0.2rem; }
+      .dinner-when .d2 b { color: var(--accent); }
+      .kv { display: flex; gap: 0.8rem; padding: 0.35rem 0; font-size: 0.97rem; }
+      .kv .k { color: var(--ink-faint); letter-spacing: 0.2em; font-size: 0.85rem; flex: none; padding-top: 0.2em; }
+      .kv .v b { color: var(--accent); font-weight: 700; }
+      .progress-note { margin: 1rem 0 0; font-size: 0.88rem; color: var(--ink-soft); line-height: 1.7; }
+
+      .field { margin-bottom: 1rem; }
+      .field label { display: block; font-size: 0.88rem; letter-spacing: 0.14em; color: var(--ink-soft); margin-bottom: 0.4rem; }
+      .field label .req { color: var(--accent); }
+      .field input[type="text"], .field input[type="datetime-local"], .field select, .field textarea {
+        width: 100%; font-family: var(--serif); font-size: 1rem; color: var(--ink);
+        background: var(--field); border: 1px solid var(--line-strong);
+        border-radius: 10px 3px 10px 3px; padding: 0.65rem 0.8rem; outline: none;
+      }
+      .field textarea { min-height: 4.6em; resize: vertical; }
+      /* 拼饭时间：iOS/微信内核下 datetime-local 原生控件有固有最小宽度，min-width/max-width 都压不住、会撑出面板；
+         拆成「日期」「时间」两个并排小框，各自原生宽度小很多，外层再用 overflow:hidden 兜底 */
+      .dt-wrap { display: flex; gap: 8px; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden; }
+      .dt-cell { position: relative; flex: 1 1 0; min-width: 0; max-width: 50%; overflow: hidden; }
+      .dt-cell input[type="date"], .dt-cell input[type="time"] {
+        display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box;
+        font-family: var(--serif); font-size: 15px; color: var(--ink);
+        background: var(--field); border: 1px solid var(--line-strong); border-radius: 4px;
+        padding: 0.65rem 0.7rem; outline: none; -webkit-appearance: none; appearance: none;
+      }
+      .dt-hint {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; padding-left: 0.85rem;
+        font-size: 1rem; line-height: 1.4; color: var(--ink-faint);
+        pointer-events: none; white-space: nowrap; overflow: hidden;
+      }
+      .dt-hint[hidden] { display: none; }
+      /* 空值时原生日期/时间段在 Chromium 里会和提示文字叠在一起，一并压透明，只留提示 */
+      #eventDateInput.no-value, #eventTimeInput.no-value { color: transparent; -webkit-text-fill-color: transparent; }
+      @media (prefers-color-scheme: dark) {
+        .dt-hint { color: rgba(242, 237, 227, 0.4); }
+      }
+      .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .write-btn {
+        font-family: var(--serif); font-size: 15px; font-weight: 500; letter-spacing: 0.3em; text-indent: 0.3em;
+        width: 100%; cursor: pointer; color: var(--ink); background: transparent;
+        border: 1px solid var(--line-strong); padding: 0.75rem 1rem;
+        border-radius: 2px;
+        transition: border-color 0.3s, color 0.3s, background 0.3s;
+      }
+      .write-btn:hover, .write-btn:focus-visible { border-color: var(--ink); background: rgba(47, 42, 32, 0.05); }
+      .write-btn[disabled] { opacity: 0.65; cursor: wait; }
+      .photo-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+      .photo-pick {
+        font-family: var(--serif); font-size: 0.92rem; cursor: pointer; color: var(--ink);
+        border: 1.5px dashed var(--line-strong); background: transparent;
+        border-radius: 10px 3px 10px 3px; padding: 0.6rem 1.1rem;
+      }
+      .photo-pick:hover { border-color: var(--accent); color: var(--accent); }
+      #photoPreview { display: none; align-items: center; gap: 0.7rem; }
+      #photoPreview img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px 2px 8px 2px; border: 1px solid var(--line-strong); }
+      .mini-btn {
+        font-family: var(--serif); font-size: 0.85rem; cursor: pointer; color: var(--ink-soft);
+        background: transparent; border: 1px solid var(--line-strong); border-radius: 6px 2px 6px 2px; padding: 0.3rem 0.7rem;
+      }
+      .mini-btn:hover { color: var(--accent); border-color: var(--accent); }
+      .submit-btn, .gen-btn {
+        font-family: var(--hand); font-size: 1.3rem; letter-spacing: 0.22em; text-indent: 0.22em;
+        width: 100%; cursor: pointer; color: #f7efdd; background: var(--accent);
+        border: 1.5px solid var(--accent); padding: 0.75rem 1rem 0.6rem;
+        border-radius: 255px 16px 225px 16px / 16px 225px 16px 255px;
+        transition: filter 0.25s, transform 0.25s;
+      }
+      .submit-btn:hover, .gen-btn:hover { filter: brightness(1.1); }
+      .submit-btn:active, .gen-btn:active { transform: scale(0.99); }
+      /* 所有按钮点下去立刻有回弹，零延迟反馈 */
+      .door-btn:active, .write-btn:active, .photo-pick:active, .mini-btn:active,
+      .dl-btn:active, .vote-btn:active, .bb-vote:active, .bb-act:active { transform: scale(0.96); }
+      .form-msg { min-height: 1.5em; font-size: 0.9rem; color: var(--accent); margin: 0.7rem 0 0; text-align: center; }
+      .form-note { font-size: 0.82rem; color: var(--ink-faint); margin: 0.8rem 0 0; line-height: 1.7; }
+
+      .sub-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem; }
+      .sub-empty { color: var(--ink-faint); text-align: center; padding: 1.6rem 0.5rem; border: 1.5px dashed var(--line); border-radius: 12px 3px 12px 3px; font-size: 0.95rem; }
+      .sub {
+        display: flex; gap: 0.9rem; align-items: flex-start;
+        border: 1px solid var(--line); border-radius: 12px 3px 12px 3px;
+        padding: 0.8rem 0.9rem; background: var(--field);
+      }
+      .sub img, .sub .mono {
+        width: 58px; height: 58px; flex: none; object-fit: cover;
+        border-radius: 50% 46% 52% 48% / 48% 52% 46% 50%;
+        border: 1px solid var(--line-strong);
+      }
+      .sub .mono { display: grid; place-items: center; font-family: var(--hand); font-size: 1.5rem; color: var(--accent); background: var(--accent-soft); }
+      .sub .body { flex: 1; min-width: 0; }
+      .sub .t1 { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+      .sub .dish { font-family: var(--hand); font-size: 1.35rem; line-height: 1.25; }
+      .sub .cat { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px 1px 4px 1px; padding: 0.05rem 0.45rem; }
+      .sub .who { font-size: 0.85rem; color: var(--ink-faint); }
+      .sub .desc { font-size: 0.9rem; color: var(--ink-soft); margin: 0.2rem 0 0; overflow-wrap: anywhere; }
+      .sub .del { flex: none; }
+      .gen-zone { margin-top: 1.4rem; border-top: 1px solid var(--line); padding-top: 1.3rem; text-align: center; }
+      .gen-btn {
+        display: inline-block; width: auto;
+        font-family: var(--serif); font-size: 16px; font-weight: 500; letter-spacing: 0.3em; text-indent: 0.3em;
+        color: var(--ink); background: transparent; cursor: pointer;
+        border: 1.5px solid var(--ink); border-radius: 2px; padding: 16px 40px;
+        transition: background 0.25s, color 0.25s;
+      }
+      .gen-btn:hover, .gen-btn:focus-visible { background: rgba(47, 42, 32, 0.07); filter: none; }
+      .gen-btn:active { transform: scale(0.98); }
+      .link-zone { margin-top: 1.4rem; border-top: 1px dashed var(--line); padding-top: 1.3rem; }
+      #linkOut[hidden] { display: none; }
+      #linkText { font-size: 0.78rem; line-height: 1.6; word-break: break-all; }
+      #boardWrap { margin-top: 1.3rem; text-align: center; }
+      #boardWrap[hidden] { display: none; }
+      #boardWrap canvas { max-width: 100%; height: auto; border-radius: 6px 2px 6px 2px; box-shadow: var(--shadow); border: 1px solid var(--line-strong); }
+      .dl-btn {
+        display: inline-block; margin-top: 1rem; text-decoration: none;
+        font-family: var(--hand); font-size: 1.25rem; letter-spacing: 0.2em; text-indent: 0.2em;
+        color: var(--ink); border: 1.5px solid var(--line-strong); padding: 0.6rem 2rem 0.45rem;
+        border-radius: 225px 14px 255px 14px / 14px 255px 14px 225px;
+        transition: all 0.25s;
+      }
+      .dl-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+      #boardMsg { font-size: 0.9rem; color: var(--accent); min-height: 1.5em; margin: 0.7rem 0 0; text-align: center; }
+
+      /* ---------- 投票 · 厨神榜 ---------- */
+      .vote-row { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.55rem; }
+      .vote-btn {
+        font-family: var(--serif); font-size: 0.9rem; cursor: pointer;
+        color: var(--accent); background: transparent;
+        border: 1.5px solid var(--accent);
+        border-radius: 225px 14px 255px 14px / 14px 255px 14px 225px;
+        padding: 0.32rem 1rem; transition: all 0.25s;
+      }
+      .vote-btn:hover { background: var(--accent-soft); }
+      .vote-btn.on { background: var(--accent); color: #f7efdd; }
+      .vote-btn[disabled] { cursor: default; opacity: 0.9; }
+      .vote-count { font-family: var(--hand); font-size: 1.15rem; color: var(--accent); }
+      .rank-row { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.55rem 0.3rem; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
+      .rank-row:last-child { border-bottom: none; }
+      .rank-no { font-family: var(--hand); font-size: 1.3rem; color: var(--ink-faint); width: 1.4em; text-align: center; flex: none; }
+      .rank-row.top .rank-no { color: var(--accent); }
+      .rank-dish { font-family: var(--hand); font-size: 1.3rem; line-height: 1.25; }
+      .rank-who { font-size: 0.85rem; color: var(--ink-faint); }
+      .rank-votes { margin-left: auto; font-family: var(--hand); font-size: 1.2rem; color: var(--accent); white-space: nowrap; }
+      .god-tag {
+        font-family: var(--hand); font-size: 0.95rem; color: #f7efdd; background: var(--accent);
+        padding: 0.08rem 0.55rem; border-radius: 5px 2px 6px 3px; transform: rotate(-2deg); white-space: nowrap;
+      }
+
+      /* ---------- 共享小黑板 ---------- */
+      .blackboard {
+        position: relative;
+        background-color: #1E2420;
+        background-image:
+          radial-gradient(42% 26% at 20% 18%, rgba(242, 237, 227, 0.045), rgba(242, 237, 227, 0) 72%),
+          radial-gradient(34% 24% at 82% 76%, rgba(242, 237, 227, 0.035), rgba(242, 237, 227, 0) 70%),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/></filter><rect width="180" height="180" filter="url(%23n)"/></svg>');
+        border: 9px solid #4A3826;
+        border-radius: 4px;
+        box-shadow: inset 0 0 0 1px #14181A, inset 0 0 34px rgba(0, 0, 0, 0.32), var(--shadow);
+        color: #F2EDE3;
+        padding: 32px 28px;
+        margin-bottom: clamp(2.4rem, 6vw, 3.6rem);
+      }
+      .blackboard::after {
+        content: ""; position: absolute; left: -9px; right: -9px; bottom: -20px; height: 8px;
+        background: linear-gradient(#4A3826, #392B1D); border-radius: 3px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+      }
+      /* 板面上没擦净的粉笔灰，淡淡一层 */
+      .blackboard::before {
+        content: ""; position: absolute; inset: 1px; z-index: 0; border-radius: 2px; pointer-events: none;
+        background:
+          radial-gradient(30% 18% at 68% 24%, rgba(242, 237, 227, 0.045), rgba(242, 237, 227, 0) 70%),
+          radial-gradient(24% 30% at 12% 78%, rgba(242, 237, 227, 0.032), rgba(242, 237, 227, 0) 70%);
+        opacity: 0.55; transition: opacity 0.6s ease;
+      }
+      .blackboard.erasing::before { opacity: 0.9; }
+      .bb-head, .bb-list, .bb-foot { position: relative; z-index: 1; }
+      .bb-head { text-align: center; }
+      .bb-kicker { margin: 0; font-size: 11px; letter-spacing: 0.34em; text-indent: 0.34em; color: rgba(201, 191, 174, 0.72); font-weight: 400; }
+      .bb-theme {
+        font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 7.5vw, 64px); line-height: 1.32;
+        margin: 12px 0 0; color: #F2EDE3; word-break: keep-all; overflow-wrap: anywhere;
+        text-align: center;
+        text-shadow: 0 0 1px rgba(242, 237, 227, 0.42), 0 0 7px rgba(242, 237, 227, 0.12);
+      }
+      .bb-intro {
+        margin: 12px auto 0; max-width: 32em; text-align: center;
+        font-size: 14px; line-height: 1.85; color: #C9BFAE; letter-spacing: 0.04em;
+        white-space: pre-wrap; overflow-wrap: anywhere;
+      }
+      .bb-intro:empty { display: none; }
+      .bb-when {
+        font-family: var(--serif); font-size: 13px; font-weight: 400;
+        color: #C9BFAE; margin: 12px 0 0; letter-spacing: 0.12em;
+      }
+      .bb-actions { display: flex; align-items: baseline; gap: 7px; margin: 0; grid-column: 2; grid-row: 2; justify-self: end; }
+      .bb-act {
+        font-family: var(--serif); font-size: 13px; line-height: 1.5; cursor: pointer;
+        color: #C9BFAE; background: transparent; border: none; border-radius: 0;
+        padding: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+      }
+      .bb-act + .bb-act::before { content: "·"; display: inline-block; margin-right: 7px; color: #C9BFAE; text-decoration: none; }
+      .bb-act:hover, .bb-act:focus-visible { color: #F2EDE3; }
+      .bb-act.armed { color: #D8A183; }
+      .bb-act[disabled] { opacity: 0.6; cursor: wait; }
+      .bb-status { margin: 14px 0 0; font-size: 12px; font-weight: 400; color: rgba(201, 191, 174, 0.72); letter-spacing: 0.08em; }
+      .bb-status:empty { display: none; }
+      .bb-status.off { color: #D8A183; }
+      .blackboard.bb-quiet .bb-when.unset { font-size: 12px; opacity: 0.55; }
+      /* 空板（无主题、无菜）：拉开纵向节奏，标题醒目、正文安静 */
+      .blackboard.bb-quiet .bb-theme { margin-top: 24px; }
+      .blackboard.bb-quiet .bb-when { margin-top: 18px; }
+      .blackboard.bb-quiet .bb-list { margin-top: 34px; }
+      .blackboard.bb-quiet .bb-empty { padding: 30px 0; color: rgba(201, 191, 174, 0.66); }
+      .blackboard.bb-quiet .bb-foot { margin-top: 34px; }
+      .bb-list { margin-top: 22px; }
+      .bb-empty {
+        text-align: center; color: rgba(201, 191, 174, 0.82);
+        font-family: var(--serif); font-size: 15px; font-weight: 400; padding: 22px 0; margin: 0;
+      }
+      .bb-row {
+        display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px;
+        align-items: start; padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .bb-row:last-child { border-bottom: none; }
+      .bb-main { display: contents; }
+      .bb-dish {
+        grid-column: 1; grid-row: 1; display: block; min-width: 0;
+        font-family: var(--serif); font-size: 17px; font-weight: 500; line-height: 1.45;
+        color: #F2EDE3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        text-shadow: 0 0 1px rgba(242, 237, 227, 0.38), 0 0 6px rgba(242, 237, 227, 0.1);
+      }
+      .bb-cook { grid-column: 1; grid-row: 2; min-width: 0; font-size: 13px; line-height: 1.5; color: #B9AE9C; white-space: normal; word-break: keep-all; overflow-wrap: anywhere; }
+      .bb-desc { display: none; }
+      .bb-votebox { grid-column: 2; grid-row: 1; display: flex; align-items: baseline; gap: 10px; justify-self: end; padding-top: 1px; }
+      .bb-vote {
+        font-family: var(--serif); font-size: 14px; line-height: 1.35; cursor: pointer;
+        color: #B0714F; background: transparent;
+        border: 1.5px solid #B0714F; border-radius: 2px;
+        padding: 8px 18px; transition: background 0.25s, color 0.25s; white-space: nowrap;
+      }
+      .bb-vote:hover { background: rgba(176, 113, 79, 0.14); }
+      .bb-vote.on { background: #B0714F; color: #1E2420; }
+      .bb-vote[disabled] { cursor: default; }
+      .bb-count { font-family: var(--serif); font-size: 15px; line-height: 1.45; color: #F2EDE3; white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .bb-foot { text-align: center; margin: 22px 0 0; font-size: 13px; font-weight: 400; letter-spacing: 0.08em; color: #B9AE9C; }
+
+      /* ---------- 粉笔逐字写 · 板擦擦过 ---------- */
+      .bb-dish .ch { display: inline-block; opacity: 0; filter: blur(2px); transform: translateY(2px) rotate(-1.5deg); }
+      .bb-dish .ch.on { opacity: 1; filter: blur(0); transform: none; transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease; }
+      .bb-dish.writing::after {
+        content: ""; display: inline-block; width: 0.55em; height: 0.13em; margin-left: 0.14em;
+        background: rgba(246, 242, 223, 0.9); border-radius: 2px; transform: rotate(-10deg);
+        vertical-align: baseline; animation: chalkBlink 0.45s steps(2, start) infinite;
+      }
+      @keyframes chalkBlink { 50% { opacity: 0.25; } }
+      .bb-row.fresh .bb-cook, .bb-row.fresh .bb-desc, .bb-row.fresh .bb-votebox, .bb-row.fresh .bb-actions { opacity: 0; }
+      .bb-row.fresh.settled .bb-cook, .bb-row.fresh.settled .bb-desc, .bb-row.fresh.settled .bb-votebox, .bb-row.fresh.settled .bb-actions { opacity: 1; transition: opacity 0.6s ease 0.1s; }
+      .bb-eraser {
+        position: absolute; z-index: 3; width: 82px; height: 30px; left: 2%; top: 10%;
+        border-radius: 4px; opacity: 0; pointer-events: none; transform: rotate(-5deg);
+        background: linear-gradient(#6E5636 0 38%, #4A3826 38% 46%, #2B2B28 46% 100%);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.35);
+      }
+      .blackboard.erasing .bb-eraser { animation: bbSweep 1.45s ease-in-out both; }
+      @keyframes bbSweep {
+        0% { left: 2%; top: 10%; opacity: 0; transform: rotate(-6deg); }
+        10% { opacity: 1; }
+        30% { left: calc(100% - 120px); top: 24%; transform: rotate(4deg); }
+        52% { left: 5%; top: 48%; transform: rotate(-5deg); }
+        74% { left: calc(100% - 120px); top: 64%; transform: rotate(5deg); }
+        90% { opacity: 1; }
+        100% { left: 34%; top: 84%; opacity: 0; transform: rotate(-3deg); }
+      }
+      .blackboard.erasing .bb-head, .blackboard.erasing .bb-list, .blackboard.erasing .bb-foot, .blackboard.erasing .bb-doodle { animation: bbWipe 1.45s ease-in both; }
+      @keyframes bbWipe {
+        0% { opacity: 1; filter: blur(0); }
+        38% { opacity: 0.55; filter: blur(1.5px); }
+        72% { opacity: 0.16; filter: blur(3.5px); }
+        100% { opacity: 0.07; filter: blur(4px); }
+      }
+      .blackboard.erasing { pointer-events: none; }
+      .bb-doodle { position: absolute; z-index: 1; right: 20px; bottom: 17px; width: 54px; height: auto; opacity: 0.35; transform: rotate(-2deg); pointer-events: none; }
+      .bb-doodle path { fill: none; stroke: #F2EDE3; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+      @media (prefers-reduced-motion: reduce) {
+        .blackboard.erasing .bb-eraser, .blackboard.erasing .bb-head, .blackboard.erasing .bb-list, .blackboard.erasing .bb-foot { animation: none; }
+        .bb-dish .ch { transition: none; }
+        .bb-dish.writing::after { animation: none; }
+      }
+      @media (max-width: 560px) {
+        .bb-row { flex-wrap: wrap; }
+        .bb-votebox { padding-top: 0; }
+        .bb-doodle { position: relative; right: auto; bottom: auto; display: block; margin: 10px 2px 0 auto; }
+        .bb-foot { padding-right: 0; margin-top: 10px; }
+      }
+      .submit-btn[disabled] { opacity: 0.65; cursor: wait; }
+
+      /* ---------- 许愿池（浅水池） ---------- */
+      /* 池面：暖纸浅 #ECE5D3；无外框，只留一层极浅内影，靠色块与留白界定 */
+      .wish-board {
+        position: relative;
+        background-color: #ECE5D3;
+        border: none;
+        border-radius: 2px;
+        box-shadow: inset 0 0 0 1px rgba(38, 34, 28, 0.08);
+        color: #26221C;
+        padding: clamp(1.4rem, 4vw, 2.1rem);
+        margin-bottom: clamp(2.4rem, 6vw, 3.6rem);
+        min-width: 0;
+      }
+      .wish-board .field label { color: rgba(38, 34, 28, 0.78); }
+      .wish-board .field label .req { color: #B0714F; }
+      .wish-board .field input[type="text"] {
+        background: #F7F3E8; color: #26221C;
+        border: 1px solid rgba(38, 34, 28, 0.3); border-radius: 4px;
+      }
+      .wish-board .field input[type="text"]::placeholder { color: rgba(38, 34, 28, 0.48); }
+      .wish-board .field input[type="text"]:focus { border-color: #B0714F; box-shadow: 0 0 0 3px rgba(176, 113, 79, 0.18); }
+      .wish-board .write-btn { color: #26221C; border-color: rgba(38, 34, 28, 0.3); border-radius: 4px; }
+      .wish-board .write-btn:hover, .wish-board .write-btn:focus-visible { border-color: #B0714F; background: rgba(176, 113, 79, 0.08); }
+      .wish-board .form-msg { color: #B0714F; }
+      .wish-head { text-align: center; margin-bottom: 1.2rem; }
+      .wish-title { font-family: var(--hand); font-weight: 400; font-size: clamp(1.8rem, 5vw, 2.3rem); margin: 0; color: #26221C; }
+      .wish-sub { color: rgba(38, 34, 28, 0.65); font-size: 0.92rem; margin: 0.3rem 0 0; }
+      .wish-fields { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+      .wish-fields .field { flex: 1 1 10rem; min-width: 0; }
+      .wish-fields input[type="text"] { border-radius: 4px; }
+      .wish-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem; }
+      .wish-empty { text-align: center; color: rgba(38, 34, 28, 0.6); font-size: 0.95rem; padding: 1.4rem 0.5rem; margin: 0; }
+      /* 每条愿望是一张暖纸许愿签 #F7F2E6，微微错落地浮在浅水池面上，只留一层极淡投影 */
+      .wish-row {
+        display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.3rem 1rem;
+        align-items: center; padding: 0.85rem 1rem;
+        background: #F7F2E6;
+        border: none;
+        border-radius: 2px;
+        box-shadow: 0 2px 6px rgba(38, 34, 28, 0.08);
+      }
+      .wish-row:nth-child(odd) { transform: translateX(-4px) rotate(-1.3deg); }
+      .wish-row:nth-child(even) { transform: translateX(6px) rotate(1.2deg); }
+      .wish-main { min-width: 0; }
+      .wish-dish { font-family: var(--hand); font-size: 1.45rem; line-height: 1.3; color: #26221C; word-break: keep-all; overflow-wrap: anywhere; }
+      .wish-meta { font-size: 0.85rem; color: #6B5F4E; word-break: keep-all; overflow-wrap: anywhere; }
+      .wish-meta b { color: #6B5F4E; font-weight: 600; }
+      .wish-acts { display: flex; gap: 0.6rem; align-items: center; }
+      /* 认领：陶土细描边，陶土字 */
+      .wish-claim {
+        font-family: var(--serif); font-size: 0.88rem; cursor: pointer; white-space: nowrap;
+        color: #B0714F; background: transparent; border: 1px solid #B0714F; border-radius: 2px;
+        padding: 0.38rem 0.95rem; transition: background 0.25s, color 0.25s, border-color 0.25s;
+      }
+      .wish-claim:hover { background: rgba(176, 113, 79, 0.12); color: #B0714F; }
+      .wish-claim.solid { background: #B0714F; border-color: #B0714F; color: #F7F2E6; }
+      .wish-claim.solid:hover { background: #B0714F; color: #F7F2E6; }
+      /* 删除：墨褐文字链 */
+      .wish-del {
+        font-family: var(--serif); font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+        color: #6B5F4E; background: transparent; border: none; border-radius: 0;
+        padding: 0.2rem 0.1rem; text-decoration: none; transition: color 0.25s;
+      }
+      .wish-del:hover { color: #6B5F4E; text-decoration: underline; text-underline-offset: 3px; }
+      .wish-del.armed { color: #6B5F4E; text-decoration: underline; text-underline-offset: 3px; }
+      .wish-confirm {
+        grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+        margin-top: 0.5rem; min-width: 0;
+      }
+      .wish-confirm label { font-size: 0.88rem; color: #6B5F4E; flex: none; }
+      .wish-confirm input[type="text"] {
+        flex: 1 1 8rem; min-width: 0; width: 100%; font-family: var(--serif); font-size: 1rem; color: #26221C;
+        background: #F7F3E8; border: 1px solid rgba(38, 34, 28, 0.3); border-radius: 2px; padding: 0.55rem 0.7rem; outline: none;
+      }
+      .wish-confirm input[type="text"]::placeholder { color: rgba(38, 34, 28, 0.45); }
+      .wish-confirm input[type="text"]:focus { border-color: #B0714F; }
+      .wish-claim:active, .wish-del:active { transform: scale(0.96); }
+
+      /* ---------- 大院基金（小猪存钱罐） ---------- */
+      /* 和许愿池同一块浅水池面，靠小猪线条和大数字立住；账目行收得齐整，像一本小账本 */
+      .fund-board {
+        position: relative;
+        background-color: #ECE5D3;
+        border: none;
+        border-radius: 2px;
+        box-shadow: inset 0 0 0 1px rgba(38, 34, 28, 0.08);
+        color: #26221C;
+        padding: clamp(1.4rem, 4vw, 2.1rem);
+        margin-bottom: clamp(2.4rem, 6vw, 3.6rem);
+        min-width: 0;
+      }
+      .fund-board .field label { color: rgba(38, 34, 28, 0.78); }
+      .fund-board .field label .req { color: #B0714F; }
+      .fund-board .field input[type="text"], .fund-board .field input[type="number"] {
+        width: 100%; font-family: var(--serif); font-size: 1rem;
+        background: #F7F3E8; color: #26221C;
+        border: 1px solid rgba(38, 34, 28, 0.3); border-radius: 4px;
+        padding: 0.65rem 0.8rem; outline: none;
+      }
+      .fund-board .field input::placeholder { color: rgba(38, 34, 28, 0.48); }
+      .fund-board .field input:focus { border-color: #B0714F; box-shadow: 0 0 0 3px rgba(176, 113, 79, 0.18); }
+      .fund-board .write-btn { color: #26221C; border-color: rgba(38, 34, 28, 0.3); border-radius: 4px; }
+      .fund-board .write-btn:hover, .fund-board .write-btn:focus-visible { border-color: #B0714F; background: rgba(176, 113, 79, 0.08); }
+      .fund-board .form-msg { color: #B0714F; }
+      .fund-top {
+        display: flex; flex-wrap: wrap; align-items: center;
+        gap: 1rem 1.6rem; margin-bottom: 1.4rem;
+      }
+      .fund-main { display: flex; align-items: center; gap: 1.1rem; flex: 1 1 13rem; min-width: 0; }
+      /* 小猪存钱罐：手绘猪形罐，打赏过的人化作罐里的泡泡；泡泡只分大中小三档，不露数字 */
+      .fund-jar { position: relative; width: min(320px, 84vw); flex: none; }
+      .fund-jar svg { display: block; width: 100%; height: auto; }
+      .fund-jar path, .fund-jar circle, .fund-jar ellipse {
+        fill: none; stroke: #26221C; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+      }
+      .fund-jar .jar-body { fill: rgba(247, 242, 230, 0.4); }
+      .fund-jar .coin { stroke: #B0714F; }
+      .fund-jar .dot { fill: #26221C; stroke: none; }
+      .fund-bubbles {
+        position: absolute; left: 13%; right: 13%; top: 24%; bottom: 15%;
+        display: flex; flex-wrap: wrap; align-items: center; align-content: center; justify-content: center;
+        gap: 6px; overflow: hidden; padding: 4px;
+      }
+      .fund-bubbles .fund-empty { padding: 0 6px; font-size: 0.85rem; line-height: 1.6; }
+      .bubble {
+        border-radius: 50%; flex: none;
+        border: 1.5px solid rgba(176, 113, 79, 0.55);
+        background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.65), rgba(176, 113, 79, 0.12) 68%);
+        display: grid; place-items: center; text-align: center;
+        font-family: var(--hand); color: #26221C; line-height: 1.15;
+        padding: 3px; overflow: hidden;
+      }
+      .bubble.s { width: 46px; height: 46px; font-size: 0.72rem; }
+      .bubble.m { width: 62px; height: 62px; font-size: 0.88rem; }
+      .bubble.l { width: 80px; height: 80px; font-size: 1.05rem; }
+      .bubble span { display: block; max-width: 100%; overflow: hidden; word-break: break-all; }
+      .fund-mine { text-align: center; margin-top: 0.2rem; }
+      .fund-mine[hidden] { display: none; }
+      .fund-totalbox { min-width: 0; }
+      .fund-total-label { font-size: 0.8rem; letter-spacing: 0.26em; color: rgba(38, 34, 28, 0.6); margin: 0; }
+      .fund-total {
+        font-family: var(--hand); font-weight: 400;
+        font-size: clamp(2.7rem, 10vw, 3.8rem); line-height: 1.15;
+        color: #26221C; font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      /* 付款码：Venmo 与 Zelle 永远并排，各占一半；码宽随列宽流式变化，任何屏幕都不断词、不溢出 */
+      .fund-pays { display: flex; gap: 0.9rem; flex: 1 1 16rem; min-width: 0; margin-left: auto; }
+      .fund-pay { flex: 1 1 0; min-width: 0; text-align: center; }
+      .fund-qr {
+        width: 100%; max-width: 150px; aspect-ratio: 1; height: auto; margin: 0 auto; padding: 9px;
+        background: #F7F2E6; border: 1px solid rgba(38, 34, 28, 0.3); border-radius: 2px;
+        display: grid; place-items: center;
+      }
+      .fund-qr svg { width: 100%; height: 100%; display: block; }
+      .fund-qr img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 1px; }
+      .fund-pay .cap { font-size: 0.88rem; letter-spacing: 0.1em; margin: 0.5rem 0 0; color: #26221C; white-space: nowrap; }
+      .fund-pay .note { font-size: 0.78rem; color: rgba(38, 34, 28, 0.55); margin: 0.1rem 0 0; white-space: nowrap; }
+      .fund-empty { text-align: center; color: rgba(38, 34, 28, 0.6); font-size: 0.95rem; padding: 1.2rem 0.5rem; margin: 0; }
+      .fund-del {
+        font-family: var(--serif); font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+        color: rgba(38, 34, 28, 0.55); background: transparent; border: none; border-radius: 0;
+        padding: 0.2rem 0.1rem; text-decoration: none; transition: color 0.25s;
+      }
+      .fund-del:hover { color: #26221C; text-decoration: underline; text-underline-offset: 3px; }
+      .fund-del.armed { color: #26221C; text-decoration: underline; text-underline-offset: 3px; }
+      .fund-del:active { transform: scale(0.96); }
+      @media (max-width: 560px) {
+        .fund-pays { flex: 1 1 100%; margin-left: 0; }
+        .fund-main { flex-wrap: wrap; }
+        .fund-jar { width: min(300px, 80vw); }
+      }
+
+      footer.site {
+        margin-top: clamp(4rem, 10vw, 7rem); padding: 2.2rem 0 3rem;
+        border-top: 1px solid var(--line); text-align: center;
+      }
+      footer.site .f1 { font-family: var(--hand); font-size: 1.6rem; margin: 0; }
+      footer.site p { color: var(--ink-faint); font-size: 0.85rem; margin: 0.5rem 0 0; letter-spacing: 0.12em; }
+      footer.site .seal { margin-bottom: 0.8rem; }
+    </style>
+  </head>
+  <body>
+
+    <!-- ======== 门 ======== -->
+    <div id="gate">
+      <span class="side-word l">侘寂之美 · 在于不全</span>
+      <span class="side-word r">一箪食 · 一瓢饮</span>
+      <div class="gate-box">
+        <p class="pre">PRIVATE CLUB · 会员专属</p>
+        <h1>乔家大院</h1>
+        <p class="en">QIAO FAMILY COURTYARD</p>
+        <svg class="wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true" style="margin-top:1.6rem"><path d="M2 7 Q 20 2 40 7 T 78 7 T 116 7 T 154 7 T 192 7 T 230 7 T 268 7 T 298 7"/></svg>
+        <p class="ask">入院之前，请先告诉我——<b>今晚的暗号</b></p>
+        <form id="gateForm" autocomplete="off">
+          <input id="codeInput" type="text" inputmode="text" placeholder="暗 号" aria-label="请输入暗号" />
+          <p id="gateMsg" role="status"></p>
+          <button class="door-btn" type="submit">推 门</button>
+        </form>
+        <p class="hint">暗号啊，就是那个最简单的词 —— 关于爱的。<br />本周主理人，另有一把钥匙。</p>
+      </div>
+    </div>
+
+    <!-- ======== 院内 ======== -->
+    <main id="club" hidden>
+      <header class="hero wrap">
+        <div class="top-row">
+          <span class="only-wide">私房菜 · MEMBERS ONLY</span>
+          <span class="mid"><span class="seal">乔</span> 乔家大院</span>
+          <span class="only-wide">拼好饭 · 一桌好饭</span>
+        </div>
+        <h1>乔家大院</h1>
+        <p class="tagline">院子不大，只摆得下一张长桌。<br />菜不在多，贵在<b>当季、当天、当心</b>。欢迎回家吃饭。</p>
+        <figure class="hero-fig">
+          <img src="assets/hero.jpg" alt="午后光线里的乔家大院餐厅：旧木长桌上摆着手作陶碗与一口冒着热气的陶锅，陶瓶里插着一枝柿子" width="1920" height="1280" />
+          <figcaption>秋 · 柿子红了</figcaption>
+        </figure>
+        <nav aria-label="院内导航">
+          <a href="#drinks"><span class="n">壹</span>酒水单</a>
+          <a href="#thursday"><span class="n">贰</span>拼好饭</a>
+        </nav>
+      </header>
+
+      <!-- ======== 酒水单 ======== -->
+      <section id="drinks" class="wrap reveal">
+        <div class="sec-head">
+          <p class="no">第 壹 卷</p>
+          <h2>手绘酒水单</h2>
+          <p class="sub">柜上有什么，就喝什么。酒是主人自己挑的，茶是当季的。</p>
+          <svg class="wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 Q 20 2 40 7 T 78 7 T 116 7 T 154 7 T 192 7 T 230 7 T 268 7 T 298 7"/></svg>
+        </div>
+
+        <div class="board">
+          <p class="board-title">— 酒 水 单 —</p>
+          <p class="board-note">DRINKS · 柜上有什么，就喝什么</p>
+
+          <div id="drinkList"></div>
+
+          <div class="drink-hostbar" id="drinkHostBar" hidden>
+            <button type="button" class="drink-add" id="drinkAddBtn">添 加 一 种</button>
+            <p class="form-msg" id="drinkMsg" role="status"></p>
+          </div>
+
+          <p class="foot-note">酒逢知己千杯少 · 喝好，不喝倒</p>
+        </div>
+      </section>
+
+      <!-- ======== 拼好饭 ======== -->
+      <section id="thursday" class="wrap reveal">
+        <div class="sec-head">
+          <p class="no">第 贰 卷</p>
+          <h2>拼好饭</h2>
+          <p class="sub">一人带一道菜，拼成一桌饭。每一期由一位主理人定主题和时间，大家照着主题带菜；吃完投票，得票最高的那道菜，封神。</p>
+          <svg class="wave" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 Q 20 2 40 7 T 78 7 T 116 7 T 154 7 T 192 7 T 230 7 T 268 7 T 298 7"/></svg>
+        </div>
+
+        <div class="blackboard bb-quiet" id="blackboard">
+          <div class="bb-head">
+            <p class="bb-kicker">— 本 周 小 黑 板 —</p>
+            <p class="bb-theme" id="bbTheme">主题还没定<br />等主理人来写</p>
+            <p class="bb-intro" id="bbIntro"></p>
+            <p class="bb-when" id="bbWhen">本期时间 · 等主理人来定</p>
+            <p class="bb-status" id="bbStatus" role="status">正在连上小黑板…</p>
+          </div>
+          <div class="bb-list" id="bbList">
+            <p class="bb-empty">黑板还空着——今晚谁先来写第一道菜？</p>
+          </div>
+          <div class="bb-eraser" id="bbEraser" aria-hidden="true"></div>
+          <svg class="bb-doodle" viewBox="0 0 72 52" aria-hidden="true">
+            <path d="M25 10c-2.2 2.8 2.2 4.2 0 7" />
+            <path d="M36 8c-2.2 2.8 2.2 4.2 0 7" />
+            <path d="M12 25h46" />
+            <path d="M14 25c1.8 9.5 8.2 15 21 15s19.2-5.5 21-15" />
+            <path d="M24 45h22" />
+            <path d="M55.5 13.2c-.5-2 .3-3.5 2.1-4.6" />
+            <path d="M55.5 13.2c4.4.3 7.3 3 8 7.2-4.2-.2-7.2-2.7-8-7.2z" />
+          </svg>
+          <p class="bb-foot">同一块黑板，大家看到的都一样。</p>
+        </div>
+
+        <!-- 许愿池：想吃的投进池里，谁认领谁来做，认领了直接上黑板 -->
+        <div class="wish-board" id="wishBoard">
+          <div class="wish-head">
+            <h3 class="wish-title">许 愿 池</h3>
+            <p class="wish-sub">想吃的菜，投进池里；谁认领了，谁来做。</p>
+          </div>
+          <form id="wishForm" novalidate>
+            <div class="wish-fields">
+              <div class="field">
+                <label for="wishDish">想吃的菜 <span class="req">*</span></label>
+                <input type="text" id="wishDish" placeholder="例如：酒酿圆子" maxlength="20" />
+              </div>
+              <div class="field">
+                <label for="wishName">署名 <span class="req">*</span></label>
+                <input type="text" id="wishName" placeholder="大家怎么称呼你" maxlength="12" />
+              </div>
+            </div>
+            <button type="submit" class="write-btn" id="wishAddBtn">投 进 池 里</button>
+            <p class="form-msg" id="wishMsg" role="status"></p>
+          </form>
+          <div class="wish-list" id="wishList">
+            <p class="wish-empty">池里还空着——想吃什么，先投一个愿。</p>
+          </div>
+        </div>
+
+        <div class="dinner-grid">
+          <!-- 本期与主题设置 -->
+          <div class="panel" id="hostPanel">
+            <h3><span class="seal">席</span>本期拼饭</h3>
+            <div class="dinner-when">
+              <div class="d1 hand" id="dinnerDateBig">时间待定</div>
+              <div class="d2" id="dinnerDateSub"></div>
+            </div>
+            <div class="kv"><span class="k">主 题</span><span class="v">《<b id="themeNameView">还没定</b>》</span></div>
+            <p class="progress-note" id="progressNote">还没有人投稿。今晚的菜单，等你来写第一道。</p>
+
+            <div id="hostSetter" hidden>
+              <div class="field" style="margin-top:2.2rem">
+                <label for="customThemeName">本周主题</label>
+                <input type="text" id="customThemeName" value="拼好饭 · 自由发挥" maxlength="16" />
+              </div>
+              <div class="field" style="margin-top:1.8rem">
+                <label for="customThemeIntro">本期介绍</label>
+                <textarea id="customThemeIntro" maxlength="200" placeholder="这一期吃什么、要带什么，写几句，挂在主题下面给大家看"></textarea>
+              </div>
+              <div class="field" style="margin-top:1.8rem">
+                <label id="eventAtLabel">拼饭时间</label>
+                <span class="dt-wrap" role="group" aria-labelledby="eventAtLabel">
+                  <span class="dt-cell">
+                    <input type="date" id="eventDateInput" aria-label="日期" />
+                    <span class="dt-hint" id="eventDateHint" aria-hidden="true">选日期</span>
+                  </span>
+                  <span class="dt-cell">
+                    <input type="time" id="eventTimeInput" aria-label="时间" />
+                    <span class="dt-hint" id="eventTimeHint" aria-hidden="true">选时间</span>
+                  </span>
+                </span>
+              </div>
+              <button type="button" class="write-btn" id="writeBoardBtn" style="margin-top:1.8rem">写 上 黑 板</button>
+              <p class="form-msg" id="hostMsg" role="status"></p>
+            </div>
+
+            <div id="eraseZone" hidden>
+              <h3 style="margin-top:1.8rem"><span class="seal">擦</span>擦掉这块板</h3>
+              <p class="form-note" style="margin:0 0 0.8rem">菜单板生成好、发到群里之后，把黑板擦干净——主题、时间和菜品一起清掉，下一期从头再来。</p>
+              <button type="button" class="mini-btn" id="eraseBtn" style="font-size:0.95rem;padding:0.5rem 1.2rem">擦 掉 黑 板</button>
+              <p class="form-msg" id="eraseMsg" role="status"></p>
+            </div>
+          </div>
+
+          <!-- 投稿与生成 -->
+          <div class="panel">
+            <h3><span class="seal">帖</span>我来带一道菜</h3>
+            <form id="subForm" novalidate>
+              <div class="field">
+                <label for="fName">做菜人 <span class="req">*</span></label>
+                <input type="text" id="fName" placeholder="大家怎么称呼你" maxlength="12" />
+              </div>
+              <div class="field">
+                <label for="fDish">菜名 <span class="req">*</span></label>
+                <input type="text" id="fDish" placeholder="例如：妈妈做的红烧肉" maxlength="20" />
+              </div>
+              <button type="submit" class="submit-btn">写 上 黑 板</button>
+              <p class="form-msg" id="formMsg" role="status"></p>
+              <button type="button" class="mini-btn" id="cancelEditBtn" style="display:none;margin:0 auto">取消编辑，不改了</button>
+              <p class="form-note">写好点提交，立刻就上黑板，所有人都能看到。自己写的菜，旁边有「编辑」「撤回」，写错了随时改。照片不往板上存，想晒菜图发群里就好。</p>
+            </form>
+
+            <div class="rank-zone">
+              <h3 style="margin-top:2rem"><span class="seal">神</span>厨神榜 · 投票</h3>
+              <p class="form-note" style="margin:0 0 0.25rem">吃好了，就在小黑板上给心里的那道菜投一票。得票最高的那道，封为本周厨神。</p>
+              <p class="form-note" style="margin:0 0 0.8rem">票数就记在小黑板上，投出去的每一票，大家立刻都看得见。</p>
+              <div id="rankList">
+                <div class="sub-empty">还没有菜上桌。<br />等帖子到齐，再来分高下。</div>
+              </div>
+            </div>
+
+            <div class="gen-zone" id="genZone" hidden>
+              <button type="button" class="gen-btn" id="genBtn">生成手绘菜单板</button>
+              <p id="boardMsg" role="status"></p>
+              <div id="boardWrap" hidden>
+                <canvas id="boardCanvas" width="1080" height="1440"></canvas>
+                <br />
+                <a class="dl-btn" id="boardDownload" download="乔家大院-菜单板.png" href="#">下 载 菜 单 板</a>
+                <br />
+                <button type="button" class="mini-btn" id="eraseAfterGenBtn" style="margin-top:0.9rem;font-size:0.95rem;padding:0.5rem 1.2rem">菜单发好了？擦掉这块板</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap reveal" id="fundSection">
+        <!-- 大院基金：打赏主理人，或不想带菜时凑个份子——投进小猪，记一笔账 -->
+        <div class="fund-board" id="fundBoard">
+          <div class="wish-head">
+            <h3 class="wish-title">大 院 基 金</h3>
+            <p class="wish-sub">打赏主理人，或者这期不想带菜——凑个份子，都投进这只小猪。</p>
+          </div>
+          <div class="fund-top">
+            <div class="fund-main">
+              <div class="fund-jar">
+                <svg viewBox="0 0 340 250" aria-hidden="true">
+                  <circle class="coin" cx="170" cy="15" r="10" />
+                  <path class="coin" d="M170 9v12" />
+                  <path d="M148 41q22-4 44 0" />
+                  <path d="M60 97c-14-2-18-18-8-22 8-3 9 9 3 10" />
+                  <path class="jar-body" d="M60 101c-2-41 44-67 110-67 70 0 114 28 114 70 0 42-46 70-114 70-68 0-108-30-110-73z" />
+                  <path d="M108 53c-6-16 2-26 14-24 9 2 11 14 6 24" />
+                  <ellipse cx="261" cy="105" rx="13" ry="11" />
+                  <circle class="dot" cx="257.5" cy="105" r="1.6" />
+                  <circle class="dot" cx="264.5" cy="105" r="1.6" />
+                  <circle class="dot" cx="228" cy="90" r="2.4" />
+                  <path d="M240 125q5 4 10 2" />
+                  <path d="M106 173v16" />
+                  <path d="M234 173v16" />
+                  <path d="M84 196h40" />
+                  <path d="M214 196h40" />
+                </svg>
+                <div class="fund-bubbles" id="fundBubbles">
+                  <p class="fund-empty">账上还空着——第一笔，你来记。</p>
+                </div>
+              </div>
+              <div class="fund-totalbox">
+                <p class="fund-total-label">当前总额 · 美元</p>
+                <div class="fund-total" id="fundTotal">$0</div>
+              </div>
+            </div>
+            <div class="fund-pays">
+              <div class="fund-pay">
+                <div class="fund-qr">
+                  <img src="assets/venmo-qr.png" alt="Venmo 付款码" width="1085" height="875" />
+                </div>
+                <p class="cap">Venmo 付款码</p>
+              </div>
+              <div class="fund-pay">
+                <div class="fund-qr">
+                  <img src="assets/zelle-qr.png" alt="Zelle 付款码" width="780" height="670" />
+                </div>
+                <p class="cap">Zelle 付款码</p>
+              </div>
+            </div>
+          </div>
+          <form id="fundForm" novalidate>
+            <div class="wish-fields">
+              <div class="field">
+                <label for="fundAmount">金额（美元）<span class="req">*</span></label>
+                <input type="number" id="fundAmount" inputmode="decimal" min="0" step="0.01" placeholder="例如：20" />
+              </div>
+              <div class="field">
+                <label for="fundName">署名 <span class="req">*</span></label>
+                <input type="text" id="fundName" placeholder="大家怎么称呼你" maxlength="12" />
+              </div>
+            </div>
+            <button type="submit" class="write-btn" id="fundAddBtn">记 一 笔</button>
+            <p class="form-msg" id="fundMsg" role="status"></p>
+          </form>
+          <div class="fund-mine" id="fundMine" hidden>
+            <button type="button" class="fund-del" id="fundDelMine">删除我记的账</button>
+          </div>
+        </div>
+
+      </section>
+
+      <footer class="site wrap">
+        <span class="seal">乔</span>
+        <p class="f1 hand">山有小口，仿佛若有光</p>
+        <p>乔家大院 PRIVATE CLUB · 私房菜 · 拼好饭</p>
+        <p>不求全，但求真味。</p>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) { return document.getElementById(id); };
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ---------- 共享小黑板（Supabase） ---------- */
+        var SB_URL = "https://wmenlmasbdxbyxyvprez.supabase.co";
+        var SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtZW5sbWFzYmR4Ynl4eXZwcmV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMDExMzIsImV4cCI6MjEwNjU3NzEzMn0.U8-CVTQx9h2gx61S6A9yjUeFKN3qbL3Qwv4Ng3mu4lY";
+        var boardOnline = null; // null=还没连上 true=同步中 false=暂时联系不上
+        function sbHeaders(extra) {
+          var h = { apikey: SB_ANON, Authorization: "Bearer " + SB_ANON };
+          if (extra) for (var k in extra) h[k] = extra[k];
+          return h;
+        }
+        // 带 9 秒超时的小黑板请求；失败就抛错，调用方温和提示、靠轮询重试
+        // 网络层失败时自动再试一次：临时的断网或超时不该让投稿、许愿白写，也不该让首读白等一轮轮询
+        function sbFetch(path, opts) {
+          opts = opts || {};
+          function attempt() {
+            var o = {}, k;
+            for (k in opts) o[k] = opts[k];
+            o.headers = sbHeaders(opts.headers);
+            var ctrl = ("AbortController" in window) ? new AbortController() : null;
+            var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 9000) : null;
+            if (ctrl) o.signal = ctrl.signal;
+            function fin() { if (timer) clearTimeout(timer); }
+            return fetch(SB_URL + path, o).then(function (r) { fin(); return r; }, function (err) { fin(); throw err; });
+          }
+          // 读和写都一样：网络层失败（断网、超时被掐）先自动再试一次，别让一抖就整页空到下一轮轮询
+          // 只重试「没拿到任何响应」的情况；拿到了 4xx/5xx 就把结果交回调用方按原路处理
+          return attempt().catch(function () {
+            return new Promise(function (res) { setTimeout(res, 1200); }).then(attempt);
+          });
+        }
+
+        /* ---------- 本机小账本：我投过的票、我写的菜（只记在这台设备上） ---------- */
+        var OWN_KEY = "qiaojia_own_dishes", VOTED_KEY = "qiaojia_voted_dishes";
+        function lsGet(key, fallback) {
+          try {
+            var v = localStorage.getItem(key);
+            return v ? JSON.parse(v) : fallback;
+          } catch (e) { return fallback; }
+        }
+        function lsSet(key, val) {
+          try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* 存不上也不影响使用 */ }
+        }
+        // 本机账本读出来先验明形状：老版本可能在本机存过不一样的形状（比如存成了对象），
+        // 直接拿去 .filter/.indexOf 会当场报错、把整块板拖成「联系不上」。形状不对就擦掉按空账重记，
+        // 云端的数据一个字都不受影响——本机账本只记「哪些是我写的、我投过的」。
+        function lsList(key) {
+          var v = lsGet(key, []);
+          if (Object.prototype.toString.call(v) === "[object Array]") return v;
+          lsSet(key, []);
+          return [];
+        }
+        function lsMap(key) {
+          var v = lsGet(key, {});
+          if (v && typeof v === "object" && Object.prototype.toString.call(v) !== "[object Array]") return v;
+          lsSet(key, {});
+          return {};
+        }
+        var ownIds = lsList(OWN_KEY);        // 这台设备提交过的菜 id
+        var votedStore = lsMap(VOTED_KEY);   // 这台设备投过票的菜 id -> true
+
+        /* ---------- 暗号门 ---------- */
+        var gate = $("gate"), club = $("club"), form = $("gateForm"),
+            input = $("codeInput"), msg = $("gateMsg");
+        var tries = 0;
+        var wrongLines = [
+          "暗号不对。今晚的门，还不能为你开。",
+          "再想想——是最简单的那个词。",
+          "不急。想想「爱」，用英文说。"
+        ];
+        var isHost = false;
+        function enterClub(host, instant) {
+          isHost = host;
+          // 推过门就记在这一页的会话里：同一标签页刷新，不用再输暗号
+          try { sessionStorage.setItem("qiaojia_gate", host ? "qiao" : "love"); } catch (e) { /* 记不住就每次都问 */ }
+          function open() {
+            gate.style.display = "none";
+            club.hidden = false;
+            // 先把同步接上，再做角色渲染：院内任何一处渲染小毛病，都不能把整条同步链路带停
+            startBoardSync();
+            try { applyRole(); } catch (e) { /* 角色控件没画好也不影响看板 */ }
+            window.scrollTo(0, 0);
+            initReveals();
+          }
+          if (instant) { open(); return; }
+          gate.classList.add("leaving");
+          setTimeout(open, reduceMotion ? 60 : 950);
+        }
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var v = input.value.trim().toLowerCase();
+          if (v === "love" || v === "qiao") {
+            msg.textContent = "";
+            enterClub(v === "qiao", false);
+          } else {
+            msg.textContent = wrongLines[Math.min(tries, wrongLines.length - 1)];
+            tries++;
+            input.classList.remove("shake");
+            void input.offsetWidth;
+            input.classList.add("shake");
+            input.select();
+          }
+        });
+
+        // 同一个标签页里推过门了，刷新直接进院，不再问暗号
+        var savedRole = null;
+        try { savedRole = sessionStorage.getItem("qiaojia_gate"); } catch (e) { savedRole = null; }
+        if (savedRole === "qiao" || savedRole === "love") enterClub(savedRole === "qiao", true);
+
+        function applyRole() {
+          $("hostSetter").hidden = !isHost;
+          $("genZone").hidden = !isHost;
+          $("eraseZone").hidden = !isHost;
+          $("drinkHostBar").hidden = !isHost;
+          renderDrinks();
+        }
+
+        /* ---------- 入场浮现 ---------- */
+        var io = null;
+        function initReveals() {
+          var els = document.querySelectorAll(".reveal");
+          if (!("IntersectionObserver" in window) || reduceMotion) {
+            els.forEach(function (el) { el.classList.add("in"); });
+            return;
+          }
+          var obs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) { en.target.classList.add("in"); obs.unobserve(en.target); }
+            });
+          }, { threshold: 0.08 });
+          io = obs;
+          els.forEach(function (el) { obs.observe(el); });
+        }
+
+        /* ---------- 本期时间：主理人定的 event_at，不写死星期几 ---------- */
+        var eventAt = null; // 本期拼饭时间（Date），还没定就是 null
+        var WEEKCN = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+        function pad2(n) { return (n < 10 ? "0" : "") + n; }
+        function fmtEvent(d) {
+          return (d.getMonth() + 1) + "月" + d.getDate() + "日 " + WEEKCN[d.getDay()] + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+        }
+        // 日期框、时间框各自要的取值格式（拼饭时间拆两个小框，治 iOS/微信原生控件撑宽）
+        function toLocalParts(d) {
+          return {
+            date: d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()),
+            time: pad2(d.getHours()) + ":" + pad2(d.getMinutes())
+          };
+        }
+        // 黑板没定时间时的默认值：离今天最近的下一个周四 19:00（今天就是周四就用今天）
+        function defaultEventAt() {
+          var d = new Date();
+          var add = (4 - d.getDay() + 7) % 7; // 周四是 4
+          d.setDate(d.getDate() + add);
+          d.setHours(19, 0, 0, 0);
+          return d;
+        }
+        function renderEvent() {
+          if (eventAt) {
+            $("dinnerDateBig").textContent = (eventAt.getMonth() + 1) + "月" + eventAt.getDate() + "日 · " + WEEKCN[eventAt.getDay()];
+            var now = new Date();
+            var sameDay = now.getFullYear() === eventAt.getFullYear() && now.getMonth() === eventAt.getMonth() && now.getDate() === eventAt.getDate();
+            $("dinnerDateSub").innerHTML = (sameDay ? "就是<b>今天</b>——" : "") +
+              pad2(eventAt.getHours()) + ":" + pad2(eventAt.getMinutes()) + " 开饭 · " +
+              eventAt.getFullYear() + " 年 " + (eventAt.getMonth() + 1) + " 月 " + eventAt.getDate() + " 日";
+            $("bbWhen").textContent = "本期拼饭 · " + fmtEvent(eventAt);
+          } else {
+            $("dinnerDateBig").textContent = "时间待定";
+            $("dinnerDateSub").textContent = "主理人定好时间，这里就会写上";
+            $("bbWhen").textContent = "本期时间 · 等主理人来定";
+          }
+          $("bbWhen").classList.toggle("unset", !eventAt);
+          // 主理人的时间选择器跟上黑板现状：黑板有时间就显示黑板的，没定就给默认值（最近的周四 19:00）；正在选的时候不打断
+          if (isHost) {
+            var dInp = $("eventDateInput"), tInp = $("eventTimeInput");
+            if (document.activeElement !== dInp && document.activeElement !== tInp) {
+              var parts = toLocalParts(eventAt || defaultEventAt());
+              dInp.value = parts.date;
+              tInp.value = parts.time;
+            }
+            syncDtHint();
+          }
+        }
+
+        /* 空值时在小框里盖一层提示（原生控件空值在 iOS 里是黑盒、没文字）；有值自动藏 */
+        function syncDtHint() {
+          [["eventDateInput", "eventDateHint"], ["eventTimeInput", "eventTimeHint"]].forEach(function (pair) {
+            var inp = $(pair[0]), hint = $(pair[1]);
+            if (!inp || !hint) return;
+            var empty = !inp.value;
+            hint.hidden = !empty;
+            inp.classList.toggle("no-value", empty);
+          });
+        }
+        syncDtHint();
+        ["eventDateInput", "eventTimeInput"].forEach(function (id) {
+          $(id).addEventListener("input", syncDtHint);
+          $(id).addEventListener("change", syncDtHint);
+        });
+
+        /* ---------- 主题（介绍借住 style 字段，表结构不动） ---------- */
+        var theme = { name: "", intro: "" };
+        function renderTheme() {
+          $("themeNameView").textContent = theme.name || "还没定";
+          if (theme.name) {
+            $("bbTheme").textContent = "《" + theme.name + "》";
+          } else {
+            $("bbTheme").innerHTML = "主题还没定<br />等主理人来写";
+          }
+          // 介绍挂在主题《》下方，谁都能看，只有主理人能改
+          $("bbIntro").textContent = theme.intro;
+          // 主理人的编辑框跟上黑板现状；还没定主题时默认填「拼好饭 · 自由发挥」，正在打字时不打断
+          if (isHost && document.activeElement !== $("customThemeName")) $("customThemeName").value = theme.name || "拼好饭 · 自由发挥";
+          if (isHost && document.activeElement !== $("customThemeIntro")) $("customThemeIntro").value = theme.intro;
+        }
+
+        // 一键把主题、介绍和时间一起写上小黑板：先在本机板上写好，再同步；同步不上就收回来
+        $("writeBoardBtn").addEventListener("click", function () {
+          var name = $("customThemeName").value.trim();
+          var intro = $("customThemeIntro").value.trim();
+          var dv = $("eventDateInput").value, tv = $("eventTimeInput").value;
+          if ((dv && !tv) || (!dv && tv)) { $("hostMsg").textContent = "日期和时间都选上，再写上黑板。"; return; }
+          var when = dv ? new Date(dv + "T" + tv) : null;
+          if (when && isNaN(when.getTime())) when = null;
+          var btn = this;
+          theme.name = name; theme.intro = intro;
+          eventAt = when;
+          renderTheme();
+          renderEvent();
+          btn.disabled = true;
+          $("hostMsg").textContent = "写上黑板了。";
+          sbSave({ theme: name, style: intro, event_at: when ? when.toISOString() : null }).then(function (ok) {
+            btn.disabled = false;
+            if (!ok) {
+              $("hostMsg").textContent = "没同步上——小黑板暂时联系不上，刚写的先收回来，再点一次试试。";
+              sbLoad();
+              rebuildBoard();
+            }
+          });
+        });
+
+        /* ---------- 投票（票数就记在小黑板上） ---------- */
+        var votedIds = {}; // 本页里已经投过票的菜（按菜的 id 记；刷新后从本机账本恢复）
+        function newDishId() {
+          return "d" + Date.now().toString(36) + Math.floor(Math.random() * 1679616).toString(36);
+        }
+        // 票没写上黑板时，把本机的「已投」标记一起撤掉，下次还能投
+        function unvote(s) {
+          delete votedIds[s.key];
+          if (s.id && votedStore[s.id]) { delete votedStore[s.id]; lsSet(VOTED_KEY, votedStore); }
+        }
+        // 把本地先亮出来的那票写上小黑板：读最新板面、给这道菜 +1 写回；写不上就回滚，以板上为准
+        function persistVote(s) {
+          sbFetch("/rest/v1/weekly_board?id=eq.current&select=theme,style,dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              var row = (rows && rows[0]) || null;
+              if (!row) throw new Error("bad");
+              var dishes = (row.dishes && typeof row.dishes.length === "number") ? row.dishes.slice() : [];
+              var idx = -1, i;
+              if (s.id) {
+                for (i = 0; i < dishes.length; i++) { if (dishes[i] && dishes[i].id === s.id) { idx = i; break; } }
+              }
+              if (idx < 0) {
+                for (i = 0; i < dishes.length; i++) {
+                  if (dishes[i] && dishes[i].cook === s.cook && dishes[i].dish === s.dish) { idx = i; break; }
+                }
+              }
+              if (idx < 0) throw new Error("gone");
+              var d = {};
+              for (var k in dishes[idx]) d[k] = dishes[idx][k];
+              if (!d.id && s.id) d.id = s.id;
+              d.votes = (typeof d.votes === "number" ? d.votes : 0) + 1;
+              dishes[idx] = d;
+              delete pendingVotes[s.key]; // 这一票马上就以板上票数为准，本地不再另加
+              return sbSave({ dishes: dishes });
+            })
+            .then(function (ok) {
+              if (!ok) failVote(s);
+            })
+            .catch(function () {
+              failVote(s);
+            });
+        }
+        // 票没写上黑板：本地那 +1 收回来，「已投」标记也撤掉，下次还能投
+        function failVote(s) {
+          delete pendingVotes[s.key];
+          unvote(s);
+          rebuildBoard();
+          sbLoad();
+        }
+
+        /* ---------- 小黑板同步：读、写、擦 ---------- */
+        var boardSig = null; // 上次从小黑板确认下来的内容签名，没变就不重画
+        var serverRow = null; // 小黑板上最后确认的一整行（主题、时间、菜品、票数都以它为准）
+        // 乐观更新：点下去先在本地生效，下面这三本账记着还没同步上板的改动，画板时盖在确认数据之上；同步失败就撤账重画
+        var pendingDishes = {};   // id -> 还没同步上板的菜（新写的、或者改过的，先用新写法显示）
+        var pendingRemovals = {}; // id -> true，还没同步的撤回（先从板上消失）
+        var pendingVotes = {};    // 菜的 key -> true，还没同步上的票（先 +1 亮出来）
+        var knownKeys = {};  // 已经在黑板上见过的菜，用来认出哪道是新写上来的
+        var typedKeys = {};  // 已经逐字写过的菜，榜单重画时直接整行显示、不再重写
+        var boardSeen = false; // 进门第一眼看到的板不逐字写，之后新来的菜才一笔笔写
+
+        function setBoardStatus() {
+          var el = $("bbStatus");
+          if (boardOnline === null) el.textContent = "正在连上小黑板…";
+          else if (boardOnline) el.textContent = "";
+          else el.textContent = "小黑板暂时联系不上，正在重试——先看着板上已有的，等会儿自己追上";
+          el.classList.toggle("off", boardOnline === false);
+        }
+
+        function sbLoad() {
+          function readBoard(select) {
+            return sbFetch("/rest/v1/weekly_board?id=eq.current&select=" + select)
+              .then(function (r) {
+                if (!r.ok) throw new Error("bad");
+                return r.json();
+              });
+          }
+          function handleRows(rows) {
+            if (!rows || !rows.length) {
+              // 黑板那一行还没建好，补建一行，本次先按空板显示
+              boardOnline = true; setBoardStatus();
+              applyBoardData({ theme: "", style: "", dishes: [] });
+              return sbFetch("/rest/v1/weekly_board", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+                body: JSON.stringify({ id: "current", theme: "", style: "", dishes: [] })
+              }).catch(function () { /* 下个轮询周期再看 */ });
+            }
+            boardOnline = true; setBoardStatus();
+            applyBoardData(rows[0]);
+          }
+          return readBoard("theme,style,dishes,event_at")
+            .then(handleRows)
+            .catch(function () {
+              // event_at 字段还没就位时，退回不带它的读法，黑板照常转
+              return readBoard("theme,style,dishes").then(handleRows);
+            })
+            .catch(function () {
+              boardOnline = false; setBoardStatus();
+            });
+        }
+
+        function applyBoardData(row) {
+          row = row || {};
+          var dishes = (row.dishes && typeof row.dishes.length === "number") ? row.dishes : [];
+          var sig = JSON.stringify([row.theme || "", row.style || "", row.event_at || "", dishes]);
+          if (sig === boardSig) return;
+          boardSig = sig;
+          serverRow = row;
+          rebuildBoard();
+        }
+
+        // 按「板上确认的 + 本地还没同步的」重画整块板：新菜先上板、改过的先变、撤回的先消失、票先 +1
+        function rebuildBoard() {
+          var row = serverRow || { theme: "", style: "", event_at: "", dishes: [] };
+          var dishes = (row.dishes && typeof row.dishes.length === "number") ? row.dishes : [];
+          theme.name = String(row.theme || "");
+          theme.intro = String(row.style || "");
+          renderTheme();
+          var ev = row.event_at ? new Date(row.event_at) : null;
+          if (ev && isNaN(ev.getTime())) ev = null;
+          eventAt = ev;
+          renderEvent();
+          var eff = [], seen = {}, i, d, did;
+          for (i = 0; i < dishes.length; i++) {
+            d = dishes[i] || {};
+            did = d.id ? String(d.id) : "";
+            if (did) {
+              seen[did] = true;
+              if (pendingRemovals[did]) continue; // 本地已撤回、板上还没擦掉的，先不显示
+              if (pendingDishes[did]) { // 本地改过的，先用新写法；票数仍以板上为准
+                d = { id: did, cook: pendingDishes[did].cook, dish: pendingDishes[did].dish, desc: pendingDishes[did].desc, votes: (typeof d.votes === "number") ? d.votes : 0 };
+              }
+            }
+            eff.push(d);
+          }
+          for (var pid in pendingDishes) { // 本地新写、板上还没有的菜，先摆上去
+            if (!seen[pid] && !pendingRemovals[pid]) eff.push(pendingDishes[pid]);
+          }
+          // 每道菜投稿时就有一个固定 id（改菜名也不变），票数读 dishes 里存着的 votes；本地先投的那票先 +1 显示
+          subs = eff.map(function (d, i) {
+            var cook = String((d && d.cook) || ""), dish = String((d && d.dish) || ""), desc = String((d && d.desc) || "");
+            var id = (d && d.id) ? String(d.id) : "";
+            var key = id || ("old-" + i); // 还没有 id 的老菜先按位置认，投票写回时给它补上
+            var fresh = boardSeen && !knownKeys[key]; // 开板第一眼之后才冒出来的菜，逐字写上去
+            knownKeys[key] = true;
+            return {
+              id: id, key: key, cook: cook, dish: dish, desc: desc, fresh: fresh,
+              voted: !!(votedIds[key] || (id && votedStore[id])),
+              mine: !!id && ownIds.indexOf(id) >= 0,
+              votes: ((d && typeof d.votes === "number") ? d.votes : 0) + (pendingVotes[key] ? 1 : 0)
+            };
+          });
+          // 本机账本顺手对齐：已经不在板上的菜，从「我写的菜」里划掉（本地还没同步完的不算数）
+          if (ownIds.length) {
+            var kept = ownIds.filter(function (oid) {
+              return pendingDishes[oid] || pendingRemovals[oid] || subs.some(function (s) { return s.id === oid; });
+            });
+            if (kept.length !== ownIds.length) { ownIds = kept; lsSet(OWN_KEY, ownIds); }
+          }
+          boardSeen = true;
+          // 空板（没主题、没菜）单独一种安静排版：拉开上下留白，正文压低，其余状态不变
+          $("blackboard").classList.toggle("bb-quiet", !theme.name && !subs.length);
+          renderSubs();
+          updateProgress();
+        }
+
+        // PATCH 小黑板；成功后用返回的整行刷新本地，返回 true/false 表示写没写上
+        function sbSave(patch) {
+          return sbFetch("/rest/v1/weekly_board?id=eq.current", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+            body: JSON.stringify(patch)
+          }).then(function (r) {
+            if (!r.ok) throw new Error("bad");
+            return r.json();
+          }).then(function (rows) {
+            boardOnline = true; setBoardStatus();
+            if (rows && rows.length) applyBoardData(rows[0]);
+            return true;
+          }).catch(function () {
+            boardOnline = false; setBoardStatus();
+            return false;
+          });
+        }
+
+        var boardTimer = null;
+        function startBoardSync() {
+          setBoardStatus();
+          // 四路读各走各的：一处意外抛错，不能饿死另外三路（轮询随后还会整体重试）
+          [sbLoad, wishLoad, fundLoad, drinkLoad].forEach(function (fn) {
+            try { fn(); } catch (e) { /* 下一轮轮询再来 */ }
+          });
+          if (boardTimer) return;
+          boardTimer = setInterval(function () { if (!document.hidden) { sbLoad(); wishLoad(); fundLoad(); drinkLoad(); } }, 6000);
+          document.addEventListener("visibilitychange", function () {
+            if (!document.hidden) { sbLoad(); wishLoad(); fundLoad(); drinkLoad(); }
+          });
+        }
+
+        /* ---------- 擦黑板（主理人）：点两下才真擦，板擦先擦一遍再清空 ---------- */
+        var erasingNow = false;
+        function playErase(done) {
+          if (reduceMotion) { done(); return; }
+          erasingNow = true;
+          $("blackboard").classList.add("erasing");
+          setTimeout(done, 1450);
+        }
+        function armErase(btn, msgEl) {
+          if (erasingNow) return;
+          if (btn.dataset.armed) {
+            delete btn.dataset.armed;
+            btn.textContent = btn.dataset.label;
+            msgEl.textContent = "板擦擦过去了……";
+            playErase(function () {
+              // 主题、时间、菜品一起清掉；event_at 还没就位时退回不带它的擦法
+              sbSave({ theme: "", style: "", dishes: [], event_at: null })
+                .then(function (ok) { return ok ? true : sbSave({ theme: "", style: "", dishes: [] }); })
+                .then(function (ok) {
+                  $("blackboard").classList.remove("erasing");
+                  erasingNow = false;
+                  if (ok) { knownKeys = {}; typedKeys = {}; ownIds = []; lsSet(OWN_KEY, ownIds); }
+                  msgEl.textContent = ok ? "黑板擦干净了。下一期，重新开张。" : "没擦成——小黑板暂时联系不上，字都还在，再试一次。";
+                  if (ok) hideBoard();
+                });
+            });
+            return;
+          }
+          btn.dataset.armed = "1";
+          btn.dataset.label = btn.textContent;
+          btn.textContent = "再点一次，真的擦掉";
+          msgEl.textContent = "主题、时间和菜品会一起清掉，票数也从头来。";
+          setTimeout(function () {
+            if (btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = btn.dataset.label; }
+          }, 12000);
+        }
+        $("eraseBtn").addEventListener("click", function () { armErase(this, $("eraseMsg")); });
+        $("eraseAfterGenBtn").addEventListener("click", function () { armErase(this, $("boardMsg")); });
+
+        /* ---------- 许愿池（同一张表的 id='wishes' 一行，dishes 字段存愿望数组；擦黑板只动 'current' 行，不碰它） ---------- */
+        var NAME_KEY = "qiaojia_my_name", OWN_WISH_KEY = "qiaojia_own_wishes";
+        var myName = String(lsGet(NAME_KEY, "") || "");   // 上次用的署名，许愿和认领都默认带出来
+        var ownWishIds = lsList(OWN_WISH_KEY);             // 这台设备许过的愿，只有它们能删
+        var serverWishes = [];        // 许愿池上最后确认的一份愿望
+        var pendingWishAdds = {};     // id -> 还没同步上栏的许愿（先亮出来）
+        var pendingWishRemovals = {}; // id -> true，还没同步的撤下（先消失）
+        var claimingId = null;        // 正在确认认领的愿望 id
+
+        function newWishId() {
+          return "w" + Date.now().toString(36) + Math.floor(Math.random() * 1679616).toString(36);
+        }
+        function rememberName(n) {
+          myName = n;
+          lsSet(NAME_KEY, myName);
+          if (document.activeElement !== $("wishName")) $("wishName").value = myName;
+          var fn = $("fundName");
+          if (fn && document.activeElement !== fn) fn.value = myName;
+        }
+
+        // 画栏时以「栏上确认的 + 本地还没同步的」为准：新许的愿先出现、撤下的先消失
+        function effWishes() {
+          var out = [], seen = {}, i, w;
+          for (var id in pendingWishAdds) {
+            if (!pendingWishRemovals[id]) { out.push(pendingWishAdds[id]); seen[id] = true; }
+          }
+          for (i = 0; i < serverWishes.length; i++) {
+            w = serverWishes[i];
+            if (!w || !w.id || seen[w.id]) continue;
+            seen[w.id] = true;
+            if (!pendingWishRemovals[w.id]) out.push(w);
+          }
+          return out;
+        }
+
+        function renderWishes() {
+          var list = $("wishList");
+          list.innerHTML = "";
+          var wishes = effWishes();
+          // 本机账本顺手对齐：栏上已经没有的愿，从「我许的愿」里划掉（本地还没同步完的不算数）
+          if (ownWishIds.length) {
+            var alive = {};
+            wishes.forEach(function (w) { alive[w.id] = true; });
+            var keptW = ownWishIds.filter(function (wid) {
+              return alive[wid] || pendingWishAdds[wid] || pendingWishRemovals[wid];
+            });
+            if (keptW.length !== ownWishIds.length) { ownWishIds = keptW; lsSet(OWN_WISH_KEY, ownWishIds); }
+          }
+          if (!wishes.length) {
+            var empty = document.createElement("p");
+            empty.className = "wish-empty";
+            empty.textContent = "池里还空着——想吃什么，先投一个愿。";
+            list.appendChild(empty);
+            return;
+          }
+          wishes.forEach(function (w) {
+            var row = document.createElement("div");
+            row.className = "wish-row";
+            var main = document.createElement("div");
+            main.className = "wish-main";
+            var dishEl = document.createElement("div");
+            dishEl.className = "wish-dish";
+            dishEl.textContent = w.dish;
+            var meta = document.createElement("div");
+            meta.className = "wish-meta";
+            var who = document.createElement("b");
+            who.textContent = String(w.wisher || "");
+            meta.appendChild(who);
+            main.appendChild(dishEl);
+            main.appendChild(meta);
+            row.appendChild(main);
+            var acts = document.createElement("div");
+            acts.className = "wish-acts";
+            var claimBtn = document.createElement("button");
+            claimBtn.type = "button";
+            claimBtn.className = "wish-claim";
+            claimBtn.textContent = "认领";
+            claimBtn.setAttribute("aria-label", "认领「" + w.dish + "」");
+            claimBtn.addEventListener("click", function () {
+              claimingId = (claimingId === w.id) ? null : w.id;
+              renderWishes();
+              var inp = $("claimNameInput");
+              if (inp) { inp.focus(); inp.select(); }
+            });
+            acts.appendChild(claimBtn);
+            if (ownWishIds.indexOf(w.id) >= 0) {
+              var delBtn = document.createElement("button");
+              delBtn.type = "button";
+              delBtn.className = "wish-del";
+              delBtn.textContent = "删除";
+              delBtn.setAttribute("aria-label", "删除愿望「" + w.dish + "」");
+              delBtn.addEventListener("click", function () { removeWish(w, delBtn); });
+              acts.appendChild(delBtn);
+            }
+            row.appendChild(acts);
+            if (claimingId === w.id) {
+              var conf = document.createElement("div");
+              conf.className = "wish-confirm";
+              var lab = document.createElement("label");
+              lab.setAttribute("for", "claimNameInput");
+              lab.textContent = "这道菜我来做，我是";
+              var nameInp = document.createElement("input");
+              nameInp.type = "text";
+              nameInp.id = "claimNameInput";
+              nameInp.maxLength = 12;
+              nameInp.value = myName;
+              nameInp.placeholder = "你的名字";
+              nameInp.setAttribute("aria-label", "做菜人名字");
+              nameInp.addEventListener("keydown", function (ev) {
+                if (ev.key === "Enter") { ev.preventDefault(); confirmClaim(w, nameInp.value); }
+              });
+              var okBtn = document.createElement("button");
+              okBtn.type = "button";
+              okBtn.className = "wish-claim solid";
+              okBtn.textContent = "就这么定";
+              okBtn.addEventListener("click", function () { confirmClaim(w, nameInp.value); });
+              var cancelBtn = document.createElement("button");
+              cancelBtn.type = "button";
+              cancelBtn.className = "wish-del";
+              cancelBtn.textContent = "再想想";
+              cancelBtn.addEventListener("click", function () { claimingId = null; renderWishes(); });
+              conf.appendChild(lab);
+              conf.appendChild(nameInp);
+              conf.appendChild(okBtn);
+              conf.appendChild(cancelBtn);
+              row.appendChild(conf);
+            }
+            list.appendChild(row);
+          });
+        }
+
+        // 读许愿池上最新的一份愿望（许愿、删愿、认领之前都先读，免得盖掉别人刚写上的）
+        function readWishRow() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.wishes&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              var row = (rows && rows[0]) || null;
+              var arr = (row && row.dishes && typeof row.dishes.length === "number") ? row.dishes.slice() : [];
+              return arr.filter(function (x) { return !!x; });
+            });
+        }
+
+        // 把一份愿望写回许愿池；'wishes' 这一行还没建时先补建。写没写上返回 true/false
+        function persistWishes(arr) {
+          return sbFetch("/rest/v1/weekly_board?id=eq.wishes", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+            body: JSON.stringify({ dishes: arr })
+          }).then(function (r) {
+            if (!r.ok) throw new Error("bad");
+            return r.json();
+          }).then(function (rows) {
+            if (rows && rows.length) {
+              var a = rows[0].dishes;
+              serverWishes = (a && typeof a.length === "number") ? a.slice() : [];
+              renderWishes();
+              return true;
+            }
+            return sbFetch("/rest/v1/weekly_board", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+              body: JSON.stringify({ id: "wishes", theme: "", style: "", dishes: arr })
+            }).then(function (r2) {
+              if (!r2.ok) throw new Error("bad");
+              serverWishes = arr.slice();
+              renderWishes();
+              return true;
+            });
+          }).catch(function () { return false; });
+        }
+
+        function wishLoad() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.wishes&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              if (!rows || !rows.length) {
+                // 许愿池这一行还没建好，补建一行，本次先按空池显示
+                serverWishes = [];
+                renderWishes();
+                return sbFetch("/rest/v1/weekly_board", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+                  body: JSON.stringify({ id: "wishes", theme: "", style: "", dishes: [] })
+                }).catch(function () { /* 下个轮询周期再看 */ });
+              }
+              var a = rows[0].dishes;
+              serverWishes = (a && typeof a.length === "number") ? a.slice() : [];
+              renderWishes();
+            })
+            .catch(function () { /* 许愿池暂时联系不上，先看着池里已有的 */ });
+        }
+
+        $("wishName").value = myName;
+        $("wishName").addEventListener("input", function () {
+          myName = this.value.trim();
+          lsSet(NAME_KEY, myName);
+        });
+
+        var wishSubmitting = false;
+        $("wishForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (wishSubmitting) return;
+          var dish = $("wishDish").value.trim();
+          var wisher = $("wishName").value.trim();
+          var wm = $("wishMsg");
+          if (!dish) { wm.textContent = "先写下想吃的菜。"; $("wishDish").focus(); return; }
+          if (!wisher) { wm.textContent = "留个署名吧，大家才知道是谁想吃。"; $("wishName").focus(); return; }
+          wishSubmitting = true;
+          rememberName(wisher);
+          var w = { id: newWishId(), wisher: wisher, dish: dish, createdAt: Date.now() };
+          // 先亮在许愿池里（立刻看得见），再同步；同步不上就收回来
+          pendingWishAdds[w.id] = w;
+          ownWishIds.push(w.id);
+          lsSet(OWN_WISH_KEY, ownWishIds);
+          renderWishes();
+          wm.textContent = "愿望投进池里了——「" + dish + "」。";
+          $("wishDish").value = "";
+          function rollbackWish() {
+            delete pendingWishAdds[w.id];
+            ownWishIds = ownWishIds.filter(function (x) { return x !== w.id; });
+            lsSet(OWN_WISH_KEY, ownWishIds);
+            renderWishes();
+            // 填好的都留着，再点一次就能重新许
+            if (!$("wishDish").value) $("wishDish").value = w.dish;
+            wm.textContent = "没投进去——许愿池暂时联系不上，填好的都留着，再点一次试试。";
+          }
+          readWishRow()
+            .then(function (arr) {
+              arr.unshift(w);
+              delete pendingWishAdds[w.id]; // 交给栏上那一份，本地不再另盖一层
+              return persistWishes(arr);
+            })
+            .then(function (ok) {
+              wishSubmitting = false;
+              if (!ok) rollbackWish();
+            })
+            .catch(function () {
+              wishSubmitting = false;
+              rollbackWish();
+            });
+        });
+
+        // 删掉自己许的愿：点两下确认，先从栏上消失，再同步；同步不上就放回来
+        function removeWish(w, btn) {
+          if (!btn.dataset.armed) {
+            btn.dataset.armed = "1";
+            btn.dataset.label = btn.textContent;
+            btn.textContent = "再点一次删除";
+            btn.classList.add("armed");
+            setTimeout(function () {
+              if (btn.dataset.armed) {
+                delete btn.dataset.armed;
+                btn.textContent = btn.dataset.label;
+                btn.classList.remove("armed");
+              }
+            }, 12000);
+            return;
+          }
+          delete btn.dataset.armed;
+          if (claimingId === w.id) claimingId = null;
+          pendingWishRemovals[w.id] = true;
+          renderWishes();
+          $("wishMsg").textContent = "「" + w.dish + "」撤下来了。";
+          function failRemove() {
+            delete pendingWishRemovals[w.id];
+            renderWishes();
+            $("wishMsg").textContent = "没撤成——许愿池暂时联系不上，「" + w.dish + "」还在，再试一次。";
+          }
+          readWishRow()
+            .then(function (arr) {
+              var next = arr.filter(function (x) { return String(x.id || "") !== w.id; });
+              delete pendingWishRemovals[w.id]; // 交给栏上那一份，本地不再遮着它
+              return persistWishes(next);
+            })
+            .then(function (ok) {
+              if (ok) {
+                ownWishIds = ownWishIds.filter(function (x) { return x !== w.id; });
+                lsSet(OWN_WISH_KEY, ownWishIds);
+                renderWishes();
+              } else {
+                failRemove();
+              }
+            })
+            .catch(failRemove);
+        }
+
+        // 认领：确认做菜人之后，菜直接上小黑板（做菜人=认领人、描述留空、票数 0），愿望从许愿池撤下
+        function confirmClaim(w, nameVal) {
+          var claimant = String(nameVal || "").trim();
+          var wm = $("wishMsg");
+          if (!claimant) {
+            wm.textContent = "写上你的名字，这道菜就归你做了。";
+            var inp = $("claimNameInput");
+            if (inp) inp.focus();
+            return;
+          }
+          rememberName(claimant);
+          claimingId = null;
+          // 先在本地生效：愿望从栏上消失，菜先写上黑板（认领人立刻能在「我来带一道菜」里编辑、撤回）
+          pendingWishRemovals[w.id] = true;
+          renderWishes();
+          var nid = newDishId();
+          var newDish = { id: nid, cook: claimant, dish: w.dish, desc: "", votes: 0 };
+          pendingDishes[nid] = newDish;
+          ownIds.push(nid);
+          lsSet(OWN_KEY, ownIds);
+          rebuildBoard();
+          wm.textContent = "「" + w.dish + "」认领好了，已经写上黑板——做菜人 " + claimant + "。";
+          $("blackboard").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          function rollbackClaim() {
+            delete pendingDishes[nid];
+            ownIds = ownIds.filter(function (oid) { return oid !== nid; });
+            lsSet(OWN_KEY, ownIds);
+            delete pendingWishRemovals[w.id];
+            rebuildBoard();
+            renderWishes();
+            sbLoad();
+            wm.textContent = "没认领成——小黑板暂时联系不上，愿望还在许愿池里，再试一次。";
+          }
+          // 先把菜同步上黑板；菜稳了，再把愿望从许愿池同步撤下
+          readDishes()
+            .then(function (cur) {
+              cur.dishes.push(newDish);
+              delete pendingDishes[nid]; // 交给板上那一份，本地不再另盖一层
+              return sbSave({ theme: cur.theme, style: cur.style, dishes: cur.dishes });
+            })
+            .then(function (ok) {
+              if (!ok) { rollbackClaim(); return; }
+              readWishRow()
+                .then(function (arr) {
+                  var next = arr.filter(function (x) { return String(x.id || "") !== w.id; });
+                  delete pendingWishRemovals[w.id]; // 交给栏上那一份，本地不再遮着它
+                  return persistWishes(next);
+                })
+                .then(function (ok2) {
+                  if (!ok2) {
+                    delete pendingWishRemovals[w.id];
+                    renderWishes();
+                    wm.textContent = "菜已经上黑板了；愿望没撤干净，刷新后再看看。";
+                  }
+                })
+                .catch(function () {
+                  delete pendingWishRemovals[w.id];
+                  renderWishes();
+                });
+            })
+            .catch(rollbackClaim);
+        }
+
+        /* ---------- 大院基金（同一张表的 id='fund' 一行，dishes 字段存账目；擦黑板只动 'current' 行，不碰它） ---------- */
+        var OWN_FUND_KEY = "qiaojia_own_fund";
+        var ownFundIds = lsList(OWN_FUND_KEY);      // 这台设备记过的账，只有它们能删
+        var serverFund = [];          // 基金行上最后确认的一份账目
+        var pendingFundAdds = {};     // id -> 还没同步上行的账（先亮出来）
+        var pendingFundRemovals = {}; // id -> true，还没同步的删除（先消失）
+
+        function newFundId() {
+          return "f" + Date.now().toString(36) + Math.floor(Math.random() * 1679616).toString(36);
+        }
+        function fmtMoney(n) {
+          var v = Math.round(n * 100) / 100;
+          return "$" + v.toLocaleString("en-US", { minimumFractionDigits: (v % 1 ? 2 : 0), maximumFractionDigits: 2 });
+        }
+
+
+        // 画账时以「行上确认的 + 本地还没同步的」为准：新记的先出现、删掉的先消失；新的排在前
+        function effFund() {
+          var out = [], seen = {}, i, e;
+          for (var id in pendingFundAdds) {
+            if (!pendingFundRemovals[id]) { out.push(pendingFundAdds[id]); seen[id] = true; }
+          }
+          for (i = 0; i < serverFund.length; i++) {
+            e = serverFund[i];
+            if (!e || !e.id || seen[e.id]) continue;
+            seen[e.id] = true;
+            if (!pendingFundRemovals[e.id]) out.push(e);
+          }
+          out.sort(function (a, b) { return (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0); });
+          return out;
+        }
+
+        function renderFund() {
+          var entries = effFund();
+          var total = 0;
+          entries.forEach(function (e) {
+            var a = Number(e.amount);
+            if (!isNaN(a)) total += a;
+          });
+          $("fundTotal").textContent = fmtMoney(total);
+          // 本机账本顺手对齐：账上已经没有的，从「我记的账」里划掉（本地还没同步完的不算数）
+          if (ownFundIds.length) {
+            var aliveF = {};
+            entries.forEach(function (e) { aliveF[e.id] = true; });
+            var keptF = ownFundIds.filter(function (fid) {
+              return aliveF[fid] || pendingFundAdds[fid] || pendingFundRemovals[fid];
+            });
+            if (keptF.length !== ownFundIds.length) { ownFundIds = keptF; lsSet(OWN_FUND_KEY, ownFundIds); }
+          }
+          // 罐里的泡泡：只写署名——去重，按第一次打赏的时间先后排；单笔金额和时间都不露。
+          // 泡泡大小按每人累计金额分三档（小 <$25、中 $25–$75、大 >$75），只暗示，不显示任何数字
+          var jar = $("fundBubbles");
+          jar.innerHTML = "";
+          var myEntries = entries.filter(function (e) { return ownFundIds.indexOf(e.id) >= 0; });
+          $("fundMine").hidden = !myEntries.length;
+          if (!entries.length) {
+            var empty = document.createElement("p");
+            empty.className = "fund-empty";
+            empty.textContent = "账上还空着——第一笔，你来记。";
+            jar.appendChild(empty);
+            return;
+          }
+          var byFirst = entries.slice().sort(function (a, b) {
+            return (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0);
+          });
+          var names = [], seenName = {}, cum = {};
+          byFirst.forEach(function (e) {
+            var w = String(e.who || "");
+            if (!w) return;
+            var a = Number(e.amount);
+            cum[w] = (cum[w] || 0) + (isNaN(a) ? 0 : a);
+            if (!seenName[w]) { seenName[w] = true; names.push(w); }
+          });
+          names.forEach(function (w) {
+            var tier = cum[w] > 75 ? "l" : (cum[w] >= 25 ? "m" : "s");
+            var b = document.createElement("div");
+            b.className = "bubble " + tier;
+            // 按名字的哈希给一点固定的错落，每次画都一样，不跳来跳去
+            var h = 0;
+            for (var ci = 0; ci < w.length; ci++) h = (h * 31 + w.charCodeAt(ci)) % 997;
+            b.style.transform = "translateY(" + ((h % 7) - 3) + "px) rotate(" + ((h % 9) - 4) + "deg)";
+            if (w.length > 4) b.style.fontSize = (tier === "l" ? 0.88 : tier === "m" ? 0.76 : 0.64) + "rem";
+            var span = document.createElement("span");
+            span.textContent = w;
+            b.appendChild(span);
+            jar.appendChild(b);
+          });
+        }
+
+        // 读基金行上最新的一份账目（记账、删账之前都先读，免得盖掉别人刚记上的）
+        function readFundRow() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.fund&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              var row = (rows && rows[0]) || null;
+              var arr = (row && row.dishes && typeof row.dishes.length === "number") ? row.dishes.slice() : [];
+              return arr.filter(function (x) { return !!x; });
+            });
+        }
+
+        // 把一份账目写回基金行；'fund' 这一行还没建时先补建。写没写上返回 true/false
+        function persistFund(arr) {
+          return sbFetch("/rest/v1/weekly_board?id=eq.fund", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+            body: JSON.stringify({ dishes: arr })
+          }).then(function (r) {
+            if (!r.ok) throw new Error("bad");
+            return r.json();
+          }).then(function (rows) {
+            if (rows && rows.length) {
+              var a = rows[0].dishes;
+              serverFund = (a && typeof a.length === "number") ? a.slice() : [];
+              renderFund();
+              return true;
+            }
+            return sbFetch("/rest/v1/weekly_board", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+              body: JSON.stringify({ id: "fund", theme: "", style: "", dishes: arr })
+            }).then(function (r2) {
+              if (!r2.ok) throw new Error("bad");
+              serverFund = arr.slice();
+              renderFund();
+              return true;
+            });
+          }).catch(function () { return false; });
+        }
+
+        function fundLoad() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.fund&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              if (!rows || !rows.length) {
+                // 基金行还没建好，补建一行，本次先按空账显示
+                serverFund = [];
+                renderFund();
+                return sbFetch("/rest/v1/weekly_board", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+                  body: JSON.stringify({ id: "fund", theme: "", style: "", dishes: [] })
+                }).catch(function () { /* 下个轮询周期再看 */ });
+              }
+              var a = rows[0].dishes;
+              serverFund = (a && typeof a.length === "number") ? a.slice() : [];
+              renderFund();
+            })
+            .catch(function () { /* 基金暂时联系不上，先看着账上已有的 */ });
+        }
+
+        $("fundName").value = myName;
+        $("fundName").addEventListener("input", function () {
+          myName = this.value.trim();
+          lsSet(NAME_KEY, myName);
+        });
+
+        var fundSubmitting = false;
+        $("fundForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (fundSubmitting) return;
+          var rawAmt = $("fundAmount").value;
+          var amount = Math.round(parseFloat(rawAmt) * 100) / 100;
+          var who = $("fundName").value.trim();
+          var fm = $("fundMsg");
+          if (rawAmt === "" || isNaN(amount) || amount <= 0) { fm.textContent = "先填金额——给了多少，记多少。"; $("fundAmount").focus(); return; }
+          if (!who) { fm.textContent = "留个署名吧，大家才知道是谁的心意。"; $("fundName").focus(); return; }
+          fundSubmitting = true;
+          rememberName(who);
+          var entry = { id: newFundId(), who: who, amount: amount, createdAt: Date.now() };
+          // 先亮在账上（小猪旁边的数字立刻涨），再同步；同步不上就收回来
+          pendingFundAdds[entry.id] = entry;
+          ownFundIds.push(entry.id);
+          lsSet(OWN_FUND_KEY, ownFundIds);
+          renderFund();
+          fm.textContent = "记上了——谢谢 " + who + "。";
+          $("fundAmount").value = "";
+          function rollbackFund() {
+            delete pendingFundAdds[entry.id];
+            ownFundIds = ownFundIds.filter(function (x) { return x !== entry.id; });
+            lsSet(OWN_FUND_KEY, ownFundIds);
+            renderFund();
+            if (!$("fundAmount").value) $("fundAmount").value = String(entry.amount);
+            fm.textContent = "没记上——基金暂时联系不上，填好的都留着，再点一次试试。";
+          }
+          readFundRow()
+            .then(function (arr) {
+              arr.push(entry);
+              delete pendingFundAdds[entry.id]; // 交给行上那一份，本地不再另盖一层
+              return persistFund(arr);
+            })
+            .then(function (ok) {
+              fundSubmitting = false;
+              if (!ok) rollbackFund();
+            })
+            .catch(function () {
+              fundSubmitting = false;
+              rollbackFund();
+            });
+        });
+
+        // 删掉自己记的账：点两下确认，先从账上消失，再同步；同步不上就放回来
+        $("fundDelMine").addEventListener("click", function () {
+          var btn = this;
+          if (!btn.dataset.armed) {
+            btn.dataset.armed = "1";
+            btn.dataset.label = btn.textContent;
+            btn.textContent = "再点一次，真的删掉我记的账";
+            btn.classList.add("armed");
+            setTimeout(function () {
+              if (btn.dataset.armed) {
+                delete btn.dataset.armed;
+                btn.textContent = btn.dataset.label;
+                btn.classList.remove("armed");
+              }
+            }, 12000);
+            return;
+          }
+          delete btn.dataset.armed;
+          btn.textContent = btn.dataset.label;
+          btn.classList.remove("armed");
+          // 只删这台设备记的账，别人记的动不了
+          var mineIds = effFund().filter(function (e) {
+            return ownFundIds.indexOf(e.id) >= 0;
+          }).map(function (e) { return e.id; });
+          if (!mineIds.length) return;
+          mineIds.forEach(function (id) { pendingFundRemovals[id] = true; });
+          renderFund();
+          $("fundMsg").textContent = "我记的账删掉了，总额和名单都重算过了。";
+          function failRemoveFund() {
+            mineIds.forEach(function (id) { delete pendingFundRemovals[id]; });
+            renderFund();
+            $("fundMsg").textContent = "没删成——基金暂时联系不上，我记的账还在，再试一次。";
+          }
+          readFundRow()
+            .then(function (arr) {
+              var next = arr.filter(function (x) { return mineIds.indexOf(String(x.id || "")) < 0; });
+              mineIds.forEach(function (id) { delete pendingFundRemovals[id]; }); // 交给行上那一份，本地不再遮着它
+              return persistFund(next);
+            })
+            .then(function (ok) {
+              if (ok) {
+                ownFundIds = ownFundIds.filter(function (x) { return mineIds.indexOf(x) < 0; });
+                lsSet(OWN_FUND_KEY, ownFundIds);
+                renderFund();
+              } else {
+                failRemoveFund();
+              }
+            })
+            .catch(failRemoveFund);
+        });
+
+        /* ---------- 酒水单（同一张表的 id='drinks' 一行，dishes 存 [{id, name, desc}]；手绘单样式不变，只有主理人能增删改） ---------- */
+        var serverDrinks = null;      // null = 还没读到单子，先按柜上常备的那五样摆着
+        var pendingDrinkAdds = {};    // id -> 还没同步上单的新添（先亮出来）
+        var pendingDrinkEdits = {};   // id -> 还没同步上单的改法（先按新写法显示）
+        var pendingDrinkRemovals = {}; // id -> true，还没同步的删除（先消失）
+        var editingDrinkId = null;    // 正在改的那一样 id；"__new" = 正在添新的一样
+        var drinkSig = null;
+        var DRINK_SEED = [
+          { name: "单一麦芽威士忌", desc: "泥煤轻吻，纯饮或加一块老冰" },
+          { name: "本地 IPA", desc: "西海岸风格，柑橘与松针，苦得痛快" },
+          { name: "产土 山田锦 生酒", desc: "熊本花之香酒造，微气泡，青苹果与白桃的清甜" },
+          { name: "花阳浴 纯米大吟酿", desc: "埼玉南阳酿造，热带水果香，数量极少，先到先得" },
+          { name: "勃艮第霞多丽", desc: "柑橘与白花，矿物感收尾" }
+        ];
+
+        function newDrinkId() {
+          return "k" + Date.now().toString(36) + Math.floor(Math.random() * 1679616).toString(36);
+        }
+        function drinkSeed() {
+          return DRINK_SEED.map(function (d) { return { id: newDrinkId(), name: d.name, desc: d.desc }; });
+        }
+
+        // 画单时以「单上确认的 + 本地还没同步的」为准：新添的先出现、改过的先变、删掉的先消失
+        function effDrinks() {
+          if (serverDrinks == null) {
+            return DRINK_SEED.map(function (d, i) { return { id: "seed-" + i, name: d.name, desc: d.desc }; });
+          }
+          var out = [], i, d;
+          for (i = 0; i < serverDrinks.length; i++) {
+            d = serverDrinks[i];
+            if (!d || !d.id) continue;
+            if (pendingDrinkRemovals[d.id]) continue;
+            out.push(pendingDrinkEdits[d.id] || { id: String(d.id), name: String(d.name || ""), desc: String(d.desc || "") });
+          }
+          for (var id in pendingDrinkAdds) {
+            if (!pendingDrinkRemovals[id]) out.push(pendingDrinkAdds[id]);
+          }
+          return out;
+        }
+
+        function drinkEditor(d) {
+          var box = document.createElement("div");
+          box.className = "drink-editor";
+          var nameInp = document.createElement("input");
+          nameInp.type = "text";
+          nameInp.maxLength = 24;
+          nameInp.placeholder = "名称，例如：梅酒";
+          nameInp.value = d ? d.name : "";
+          nameInp.setAttribute("aria-label", "酒水名称");
+          var descInp = document.createElement("input");
+          descInp.type = "text";
+          descInp.maxLength = 60;
+          descInp.placeholder = "一句话描述，可留空";
+          descInp.value = d ? d.desc : "";
+          descInp.setAttribute("aria-label", "一句话描述");
+          var acts = document.createElement("div");
+          acts.className = "ed-acts";
+          var saveBtn = document.createElement("button");
+          saveBtn.type = "button";
+          saveBtn.className = "drink-save";
+          saveBtn.textContent = d ? "保 存" : "添 上 单 子";
+          saveBtn.addEventListener("click", function () {
+            var nm = nameInp.value.trim(), ds = descInp.value.trim();
+            if (!nm) { $("drinkMsg").textContent = "先写上名称。"; nameInp.focus(); return; }
+            if (d) saveDrinkEdit(d, nm, ds); else addDrink(nm, ds);
+          });
+          var cancelBtn = document.createElement("button");
+          cancelBtn.type = "button";
+          cancelBtn.className = "mini-btn";
+          cancelBtn.textContent = "取消";
+          cancelBtn.addEventListener("click", function () {
+            editingDrinkId = null;
+            $("drinkMsg").textContent = "";
+            renderDrinks(true);
+          });
+          nameInp.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); saveBtn.click(); } });
+          descInp.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); saveBtn.click(); } });
+          box.appendChild(nameInp);
+          box.appendChild(descInp);
+          acts.appendChild(saveBtn);
+          acts.appendChild(cancelBtn);
+          box.appendChild(acts);
+          return box;
+        }
+
+        function renderDrinks(force) {
+          var list = $("drinkList");
+          if (!list || typeof DRINK_SEED === "undefined") return;
+          // 正在编辑、光标还在单子里时，轮询那一轮先不重画，免得把打的字冲掉
+          if (!force && editingDrinkId && list.contains(document.activeElement)) return;
+          var items = effDrinks();
+          var sig = JSON.stringify([items, isHost, editingDrinkId, serverDrinks != null]);
+          if (!force && sig === drinkSig) return;
+          drinkSig = sig;
+          list.innerHTML = "";
+          if (!items.length && editingDrinkId !== "__new") {
+            var empty = document.createElement("p");
+            empty.className = "drink-empty";
+            empty.textContent = "柜上暂时空着。";
+            list.appendChild(empty);
+          }
+          var loaded = serverDrinks != null;
+          items.forEach(function (d) {
+            if (editingDrinkId === d.id) { list.appendChild(drinkEditor(d)); return; }
+            var mi = document.createElement("div");
+            mi.className = "mi";
+            var rowEl = document.createElement("div");
+            rowEl.className = "row";
+            var nm = document.createElement("span");
+            nm.className = "name";
+            nm.textContent = d.name;
+            rowEl.appendChild(nm);
+            mi.appendChild(rowEl);
+            if (d.desc) {
+              var ds = document.createElement("p");
+              ds.className = "desc";
+              ds.textContent = d.desc;
+              mi.appendChild(ds);
+            }
+            if (isHost && loaded) {
+              var acts = document.createElement("div");
+              acts.className = "drink-acts";
+              var editBtn = document.createElement("button");
+              editBtn.type = "button";
+              editBtn.className = "drink-act";
+              editBtn.textContent = "编辑";
+              editBtn.setAttribute("aria-label", "编辑「" + d.name + "」");
+              editBtn.addEventListener("click", function () {
+                editingDrinkId = d.id;
+                $("drinkMsg").textContent = "";
+                renderDrinks(true);
+                var inp = list.querySelector(".drink-editor input");
+                if (inp) { inp.focus(); inp.select(); }
+              });
+              var delBtn = document.createElement("button");
+              delBtn.type = "button";
+              delBtn.className = "drink-act";
+              delBtn.textContent = "删除";
+              delBtn.setAttribute("aria-label", "删除「" + d.name + "」");
+              delBtn.addEventListener("click", function () { removeDrink(d, delBtn); });
+              acts.appendChild(editBtn);
+              acts.appendChild(delBtn);
+              mi.appendChild(acts);
+            }
+            list.appendChild(mi);
+          });
+          if (editingDrinkId === "__new") list.appendChild(drinkEditor(null));
+        }
+
+        // 读酒水单上最新的一份（增删改之前都先读，免得盖掉别人刚改的）
+        function readDrinkRow() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.drinks&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              var row = (rows && rows[0]) || null;
+              var arr = (row && row.dishes && typeof row.dishes.length === "number") ? row.dishes.slice() : [];
+              return arr.filter(function (x) { return !!x; });
+            });
+        }
+
+        // 把一份酒水单写回 'drinks' 行；这一行还没建时先补建。写没写上返回 true/false
+        function persistDrinks(arr) {
+          return sbFetch("/rest/v1/weekly_board?id=eq.drinks", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+            body: JSON.stringify({ dishes: arr })
+          }).then(function (r) {
+            if (!r.ok) throw new Error("bad");
+            return r.json();
+          }).then(function (rows) {
+            if (rows && rows.length) {
+              var a = rows[0].dishes;
+              serverDrinks = (a && typeof a.length === "number") ? a.slice() : [];
+              renderDrinks();
+              return true;
+            }
+            return sbFetch("/rest/v1/weekly_board", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+              body: JSON.stringify({ id: "drinks", theme: "", style: "", dishes: arr })
+            }).then(function (r2) {
+              if (!r2.ok) throw new Error("bad");
+              serverDrinks = arr.slice();
+              renderDrinks();
+              return true;
+            });
+          }).catch(function () { return false; });
+        }
+
+        function drinkLoad() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.drinks&select=dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              if (!rows || !rows.length) {
+                // 'drinks' 这一行还没建好：把柜上常备的那五样灌进去，本次先按这份显示
+                var seed = drinkSeed();
+                serverDrinks = seed;
+                renderDrinks();
+                return sbFetch("/rest/v1/weekly_board", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+                  body: JSON.stringify({ id: "drinks", theme: "", style: "", dishes: seed })
+                }).catch(function () { /* 下个轮询周期再看 */ });
+              }
+              var a = rows[0].dishes;
+              serverDrinks = (a && typeof a.length === "number") ? a.slice() : [];
+              renderDrinks();
+            })
+            .catch(function () { renderDrinks(); /* 暂时联系不上，先按柜上常备的摆着 */ });
+        }
+
+        // 添一种：先亮在单子上，再同步；同步不上就收回来
+        function addDrink(name, desc) {
+          var item = { id: newDrinkId(), name: name, desc: desc };
+          pendingDrinkAdds[item.id] = item;
+          editingDrinkId = null;
+          renderDrinks();
+          function rollback() {
+            delete pendingDrinkAdds[item.id];
+            renderDrinks();
+            $("drinkMsg").textContent = "没添上——酒水单暂时联系不上，再试一次。";
+          }
+          readDrinkRow()
+            .then(function (arr) {
+              arr.push(item);
+              delete pendingDrinkAdds[item.id]; // 交给单上那一份，本地不再另盖一层
+              return persistDrinks(arr);
+            })
+            .then(function (ok) {
+              if (ok) $("drinkMsg").textContent = "「" + name + "」添上单子了。";
+              else rollback();
+            })
+            .catch(rollback);
+        }
+
+        // 改一种：先按新写法亮出来，再同步；同步不上就改回来
+        function saveDrinkEdit(orig, name, desc) {
+          var item = { id: orig.id, name: name, desc: desc };
+          pendingDrinkEdits[orig.id] = item;
+          editingDrinkId = null;
+          renderDrinks();
+          var settled = false;
+          function rollback(note) {
+            if (settled) return;
+            settled = true;
+            delete pendingDrinkEdits[orig.id];
+            renderDrinks();
+            $("drinkMsg").textContent = note;
+          }
+          readDrinkRow()
+            .then(function (arr) {
+              var idx = -1, i;
+              for (i = 0; i < arr.length; i++) {
+                if (arr[i] && String(arr[i].id || "") === orig.id) { idx = i; break; }
+              }
+              if (idx < 0) { rollback("「" + orig.name + "」已经不在单子上了。"); return; }
+              arr[idx] = item;
+              delete pendingDrinkEdits[orig.id]; // 交给单上那一份，本地不再另盖一层
+              return persistDrinks(arr).then(function (ok) {
+                if (ok) { settled = true; $("drinkMsg").textContent = "「" + name + "」改好了。"; }
+                else rollback("没改上——酒水单暂时联系不上，单上还是原来的写法，再试一次。");
+              });
+            })
+            .catch(function () { rollback("没改上——酒水单暂时联系不上，单上还是原来的写法，再试一次。"); });
+        }
+
+        // 删一种：点两下确认，先从单子上消失，再同步；同步不上就放回来
+        function removeDrink(d, btn) {
+          if (!btn.dataset.armed) {
+            btn.dataset.armed = "1";
+            btn.dataset.label = btn.textContent;
+            btn.textContent = "再点一次删除";
+            btn.classList.add("armed");
+            setTimeout(function () {
+              if (btn.dataset.armed) {
+                delete btn.dataset.armed;
+                btn.textContent = btn.dataset.label;
+                btn.classList.remove("armed");
+              }
+            }, 12000);
+            return;
+          }
+          delete btn.dataset.armed;
+          if (pendingDrinkAdds[d.id]) { // 还没同步上单的新添，直接收回就行
+            delete pendingDrinkAdds[d.id];
+            renderDrinks();
+            $("drinkMsg").textContent = "「" + d.name + "」删掉了。";
+            return;
+          }
+          pendingDrinkRemovals[d.id] = true;
+          renderDrinks();
+          $("drinkMsg").textContent = "「" + d.name + "」从单子上拿下去了。";
+          function fail() {
+            delete pendingDrinkRemovals[d.id];
+            renderDrinks();
+            $("drinkMsg").textContent = "没删成——酒水单暂时联系不上，「" + d.name + "」还在，再试一次。";
+          }
+          readDrinkRow()
+            .then(function (arr) {
+              var next = arr.filter(function (x) { return String(x.id || "") !== d.id; });
+              delete pendingDrinkRemovals[d.id]; // 交给单上那一份，本地不再遮着它
+              return persistDrinks(next);
+            })
+            .then(function (ok) { if (!ok) fail(); })
+            .catch(fail);
+        }
+
+        $("drinkAddBtn").addEventListener("click", function () {
+          editingDrinkId = "__new";
+          $("drinkMsg").textContent = "";
+          renderDrinks(true);
+          var inp = $("drinkList").querySelector(".drink-editor input");
+          if (inp) inp.focus();
+        });
+
+        /* ---------- 黑板上的菜（subs 由小黑板同步维护） ---------- */
+        var subs = []; // {id, key, cook, dish, desc, votes, voted, fresh}
+
+        function esc(s) {
+          return String(s).replace(/[&<>"']/g, function (ch) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+          });
+        }
+
+        function renderSubs() {
+          var list = $("bbList");
+          list.innerHTML = "";
+          if (!subs.length) {
+            var empty = document.createElement("p");
+            empty.className = "bb-empty";
+            empty.textContent = "黑板还空着——今晚谁先来写第一道菜？";
+            list.appendChild(empty);
+          } else {
+            subs.forEach(function (s) {
+              var row = document.createElement("div");
+              row.className = "bb-row";
+              var main = document.createElement("div");
+              main.className = "bb-main";
+              var dishSpan = document.createElement("span");
+              dishSpan.className = "bb-dish";
+              var writeIt = s.fresh && !reduceMotion && !typedKeys[s.key];
+              if (writeIt) {
+                // 新菜：菜名先一笔笔写出来，写完做菜人和票钮才淡淡浮上来
+                typedKeys[s.key] = true;
+                row.classList.add("fresh");
+                dishSpan.classList.add("writing");
+                var chars = [];
+                for (var ci = 0; ci < s.dish.length; ci++) {
+                  var ch = document.createElement("span");
+                  ch.className = "ch";
+                  ch.textContent = s.dish[ci] === " " ? "\u00A0" : s.dish[ci];
+                  dishSpan.appendChild(ch);
+                  chars.push(ch);
+                }
+                (function (spans, span, r) {
+                  var idx = 0;
+                  setTimeout(function tick() {
+                    if (idx < spans.length) {
+                      spans[idx].classList.add("on");
+                      idx++;
+                      setTimeout(tick, 70 + Math.random() * 110);
+                    } else {
+                      span.classList.remove("writing");
+                      r.classList.add("settled");
+                    }
+                  }, 120);
+                })(chars, dishSpan, row);
+              } else {
+                dishSpan.textContent = s.dish;
+              }
+              main.appendChild(dishSpan);
+              var cookSpan = document.createElement("span");
+              cookSpan.className = "bb-cook";
+              cookSpan.textContent = s.cook;
+              main.appendChild(cookSpan);
+              if (s.desc) {
+                var descSpan = document.createElement("span");
+                descSpan.className = "bb-desc";
+                descSpan.textContent = s.desc;
+                main.appendChild(descSpan);
+              }
+              if (s.mine) {
+                // 自己写的菜：可以改，也可以撤（只有提交的那台设备看得见）
+                var acts = document.createElement("div");
+                acts.className = "bb-actions";
+                var editBtn = document.createElement("button");
+                editBtn.type = "button";
+                editBtn.className = "bb-act";
+                editBtn.textContent = "编辑";
+                editBtn.setAttribute("aria-label", "编辑「" + s.dish + "」");
+                editBtn.addEventListener("click", function () { startEdit(s); });
+                var awayBtn = document.createElement("button");
+                awayBtn.type = "button";
+                awayBtn.className = "bb-act";
+                awayBtn.textContent = "撤回";
+                awayBtn.setAttribute("aria-label", "撤回「" + s.dish + "」");
+                awayBtn.addEventListener("click", function () { withdrawDish(s, awayBtn); });
+                acts.appendChild(editBtn);
+                acts.appendChild(awayBtn);
+                main.appendChild(acts);
+              }
+              var voteBtn = document.createElement("button");
+              voteBtn.type = "button";
+              voteBtn.className = "bb-vote" + (s.voted ? " on" : "");
+              voteBtn.textContent = s.voted ? "已投票" : "投一票";
+              if (s.voted) voteBtn.disabled = true;
+              voteBtn.setAttribute("aria-pressed", s.voted ? "true" : "false");
+              voteBtn.setAttribute("aria-label", "给「" + s.dish + "」投票");
+              voteBtn.addEventListener("click", function () {
+                if (s.voted) return;
+                s.voted = true;
+                votedIds[s.key] = true;
+                if (s.id) { votedStore[s.id] = true; lsSet(VOTED_KEY, votedStore); } // 记在本机：刷新后这道菜也不能再投
+                pendingVotes[s.key] = true; // 先在本地亮出来：票数立刻 +1、按钮变「已投票」，小黑板那边随后跟上
+                rebuildBoard();
+                persistVote(s);
+              });
+              var voteCount = document.createElement("span");
+              voteCount.className = "bb-count";
+              voteCount.textContent = s.votes + " 票";
+              var voteBox = document.createElement("div");
+              voteBox.className = "bb-votebox";
+              voteBox.appendChild(voteBtn);
+              voteBox.appendChild(voteCount);
+              row.appendChild(main);
+              row.appendChild(voteBox);
+              list.appendChild(row);
+            });
+          }
+          renderRank();
+        }
+
+        function renderRank() {
+          var box = $("rankList");
+          box.innerHTML = "";
+          if (!subs.length) {
+            var empty = document.createElement("div");
+            empty.className = "sub-empty";
+            empty.innerHTML = "还没有菜上桌。<br />等帖子到齐，再来分高下。";
+            box.appendChild(empty);
+            return;
+          }
+          var sorted = subs.map(function (s, i) { return { s: s, i: i }; })
+            .sort(function (a, b) { return (b.s.votes - a.s.votes) || (a.i - b.i); });
+          var topVotes = sorted[0].s.votes;
+          sorted.forEach(function (entry, r) {
+            var s = entry.s;
+            var row = document.createElement("div");
+            row.className = "rank-row" + (r === 0 && topVotes > 0 ? " top" : "");
+            row.innerHTML =
+              '<span class="rank-no">' + (r + 1) + '</span>' +
+              '<span class="rank-dish">' + esc(s.dish) + '</span>' +
+              '<span class="rank-who">' + esc(s.cook) + '</span>' +
+              (r === 0 && topVotes > 0 ? '<span class="god-tag">本周厨神</span>' : '') +
+              '<span class="rank-votes">' + s.votes + ' 票</span>';
+            box.appendChild(row);
+          });
+        }
+
+        function updateProgress() {
+          var note = $("progressNote");
+          if (!subs.length) {
+            note.textContent = "还没有人投稿。今晚的菜单，等你来写第一道。";
+            return;
+          }
+          var people = {};
+          subs.forEach(function (s) { people[s.cook] = true; });
+          var n = Object.keys(people).length;
+          note.textContent = "已收到 " + subs.length + " 道菜 · " + n + " 位朋友。" +
+            (subs.length >= 6 ? "菜已经够排一桌了，可以生成菜单板啦。" : "再等几道，就可以生成菜单板了。");
+        }
+
+        var submitting = false;
+        var editingId = null; // 正在改的那道菜的 id；null = 在写新菜
+
+        // 读小黑板上最新的一份菜品（投稿、改菜、撤菜之前都先读，免得盖掉别人刚写上的）
+        function readDishes() {
+          return sbFetch("/rest/v1/weekly_board?id=eq.current&select=theme,style,dishes")
+            .then(function (r) {
+              if (!r.ok) throw new Error("bad");
+              return r.json();
+            })
+            .then(function (rows) {
+              var row = (rows && rows[0]) || { theme: "", style: "", dishes: [] };
+              return {
+                theme: row.theme || "", style: row.style || "",
+                dishes: (row.dishes && typeof row.dishes.length === "number") ? row.dishes.slice() : []
+              };
+            });
+        }
+
+        // 点了「编辑」：把原来的内容填回表单，保存时覆盖那道菜，票数留着
+        function startEdit(s) {
+          editingId = s.id;
+          $("fName").value = s.cook;
+          $("fDish").value = s.dish;
+          $("subForm").querySelector(".submit-btn").textContent = "保 存 修 改";
+          $("cancelEditBtn").style.display = "block";
+          $("formMsg").textContent = "正在改「" + s.dish + "」——改好点保存，票数都还在。";
+          $("subForm").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+          $("fDish").focus();
+        }
+        function endEdit(note) {
+          editingId = null;
+          $("subForm").querySelector(".submit-btn").textContent = "写 上 黑 板";
+          $("cancelEditBtn").style.display = "none";
+          if (note) $("formMsg").textContent = note;
+        }
+        $("cancelEditBtn").addEventListener("click", function () { endEdit("不改了，照旧。"); });
+
+        // 撤回自己的菜：点两下确认，从小黑板上删掉，同步给所有人
+        function withdrawDish(s, btn) {
+          if (!btn.dataset.armed) {
+            btn.dataset.armed = "1";
+            btn.dataset.label = btn.textContent;
+            btn.textContent = "再点一次撤回";
+            btn.classList.add("armed");
+            setTimeout(function () {
+              if (btn.dataset.armed) {
+                delete btn.dataset.armed;
+                btn.textContent = btn.dataset.label;
+                btn.classList.remove("armed");
+              }
+            }, 12000);
+            return;
+          }
+          delete btn.dataset.armed;
+          btn.disabled = true;
+          btn.textContent = "撤回中……";
+          // 先从本地黑板上擦掉（立刻消失），再同步小黑板；同步不上就把菜写回来
+          pendingRemovals[s.id] = true;
+          rebuildBoard();
+          function fail() {
+            delete pendingRemovals[s.id];
+            rebuildBoard();
+            sbLoad();
+            $("formMsg").textContent = "没撤成——小黑板暂时联系不上，「" + s.dish + "」还在板上，再试一次。";
+          }
+          readDishes()
+            .then(function (cur) {
+              var dishes = cur.dishes.filter(function (d) { return !d || String(d.id || "") !== s.id; });
+              delete pendingRemovals[s.id]; // 交给板上那一份，本地不再遮着它
+              return sbSave({ dishes: dishes });
+            })
+            .then(function (ok) {
+              if (ok) {
+                ownIds = ownIds.filter(function (oid) { return oid !== s.id; });
+                lsSet(OWN_KEY, ownIds);
+                if (editingId === s.id) endEdit("「" + s.dish + "」撤回了。");
+              } else {
+                fail();
+              }
+            })
+            .catch(fail);
+        }
+
+        $("subForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (submitting) return;
+          var cook = $("fName").value.trim();
+          var dish = $("fDish").value.trim();
+          var fm = $("formMsg");
+          if (!cook || !dish) {
+            fm.textContent = "做菜人和菜名都要写上，才能上黑板。";
+            (!cook ? $("fName") : $("fDish")).focus();
+            return;
+          }
+          submitting = true;
+          var btn = $("subForm").querySelector(".submit-btn");
+          btn.disabled = true;
+
+          if (editingId) {
+            // 改自己已写的菜：先在本地板上改好，再同步小黑板（按 id 找到那道、内容覆盖、票数保留）；同步不上就改回来
+            var targetId = editingId;
+            var prevDish = null;
+            subs.forEach(function (x) { if (x.id === targetId) prevDish = x; });
+            // 表单已经没有描述栏了：改菜时原来的描述原样保留、不动
+            pendingDishes[targetId] = { id: targetId, cook: cook, dish: dish, desc: prevDish ? prevDish.desc : "", votes: prevDish ? prevDish.votes : 0 };
+            rebuildBoard();
+            endEdit("改好了——「" + dish + "」，票数都还在。");
+            readDishes()
+              .then(function (cur) {
+                var idx = -1, i;
+                for (i = 0; i < cur.dishes.length; i++) {
+                  if (cur.dishes[i] && String(cur.dishes[i].id || "") === targetId) { idx = i; break; }
+                }
+                if (idx < 0) throw new Error("gone");
+                var old = cur.dishes[idx];
+                cur.dishes[idx] = {
+                  id: targetId, cook: cook, dish: dish, desc: (typeof old.desc === "string") ? old.desc : "",
+                  votes: (typeof old.votes === "number") ? old.votes : 0
+                };
+                delete pendingDishes[targetId]; // 交给板上那一份，本地不再另盖一层
+                return sbSave({ dishes: cur.dishes });
+              })
+              .then(function (ok) {
+                submitting = false;
+                btn.disabled = false;
+                if (ok) {
+                  $("fDish").value = "";
+                } else {
+                  delete pendingDishes[targetId];
+                  rebuildBoard();
+                  sbLoad();
+                  fm.textContent = "没同步上，板上还是原来的写法——再点那道菜的「编辑」改一次试试。";
+                }
+              })
+              .catch(function (err) {
+                submitting = false;
+                btn.disabled = false;
+                delete pendingDishes[targetId];
+                rebuildBoard();
+                sbLoad();
+                if (err && err.message === "gone") {
+                  endEdit("这道菜已经不在黑板上了，改不了了。");
+                  $("fDish").value = "";
+                } else {
+                  fm.textContent = "没同步上，板上还是原来的写法——再点那道菜的「编辑」改一次试试。";
+                }
+              });
+            return;
+          }
+
+          // 新菜：先写上本地黑板（立刻看得见，粉笔一笔笔写出来），再同步小黑板；同步不上就把菜收回来
+          var nid = newDishId();
+          var newDish = { id: nid, cook: cook, dish: dish, desc: "", votes: 0 };
+          pendingDishes[nid] = newDish;
+          ownIds.push(nid); // 先记在本机账本里，「编辑」「撤回」立刻就出现
+          lsSet(OWN_KEY, ownIds);
+          rebuildBoard();
+          fm.textContent = "写上黑板了——「" + dish + "」，正在告诉大家。";
+          // 同步：读最新的一块板，再把新菜追加进去写回，免得盖掉别人刚写上的菜
+          readDishes()
+            .then(function (cur) {
+              cur.dishes.push(newDish);
+              delete pendingDishes[nid]; // 交给板上那一份，本地不再另盖一层
+              return sbSave({ theme: cur.theme, style: cur.style, dishes: cur.dishes });
+            })
+            .then(function (ok) {
+              submitting = false;
+              btn.disabled = false;
+              if (ok) {
+                fm.textContent = "写上黑板了——「" + dish + "」，大家刷新一眼就能看见。";
+                $("fDish").value = "";
+                $("fDish").focus();
+              } else {
+                rollbackSubmit();
+              }
+            })
+            .catch(rollbackSubmit);
+          function rollbackSubmit() {
+            submitting = false;
+            btn.disabled = false;
+            delete pendingDishes[nid];
+            ownIds = ownIds.filter(function (oid) { return oid !== nid; });
+            lsSet(OWN_KEY, ownIds);
+            rebuildBoard();
+            sbLoad();
+            fm.textContent = "没同步上，先把菜收回来了——填好的都留着，再点一次试试。";
+          }
+        });
+
+        /* ---------- 生成手绘菜单板 ---------- */
+        var canvas = $("boardCanvas");
+        var boardWrap = $("boardWrap");
+        function hideBoard() {
+          boardWrap.hidden = true;
+          $("boardMsg").textContent = "";
+        }
+
+        function wrapText(ctx, text, maxW) {
+          var lines = [], cur = "";
+          for (var i = 0; i < text.length; i++) {
+            var t = cur + text[i];
+            if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = text[i]; }
+            else cur = t;
+          }
+          if (cur) lines.push(cur);
+          return lines;
+        }
+
+        function drawBoard() {
+          var W = 1080, H = 1440;
+          canvas.width = W; canvas.height = H;
+          var ctx = canvas.getContext("2d");
+          var PAPER = "#F4EEE1", INKC = "#26221C", SOFT = "#8A7B63",
+              DATEC = "#6B5F4E", ACC = "#A34A2A";
+          var leftX = 110, rightX = 970;
+
+          function setSpacing(px) {
+            if ("letterSpacing" in ctx) ctx.letterSpacing = px + "px";
+          }
+          function ellipsize(text, maxW) {
+            text = String(text || "");
+            if (ctx.measureText(text).width <= maxW) return text;
+            var t = text;
+            while (t.length > 1 && ctx.measureText(t + "…").width > maxW) t = t.slice(0, -1);
+            return t + "…";
+          }
+          function jitterLine(x1, x2, y) {
+            ctx.strokeStyle = "rgba(138, 123, 99, 0.58)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (var x = x1; x <= x2; x += 18) {
+              var yy = y + Math.sin((x - x1) / 31) * 1.6 + (Math.random() - 0.5) * 1.4;
+              if (x === x1) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+            }
+            ctx.stroke();
+          }
+          function paperEdge() {
+            var g;
+            g = ctx.createLinearGradient(0, 0, 0, 58);
+            g.addColorStop(0, "rgba(107, 95, 78, 0.30)"); g.addColorStop(1, "rgba(107, 95, 78, 0)");
+            ctx.fillStyle = g; ctx.fillRect(0, 0, W, 58);
+            g = ctx.createLinearGradient(0, H, 0, H - 58);
+            g.addColorStop(0, "rgba(107, 95, 78, 0.30)"); g.addColorStop(1, "rgba(107, 95, 78, 0)");
+            ctx.fillStyle = g; ctx.fillRect(0, H - 58, W, 58);
+            g = ctx.createLinearGradient(0, 0, 58, 0);
+            g.addColorStop(0, "rgba(107, 95, 78, 0.26)"); g.addColorStop(1, "rgba(107, 95, 78, 0)");
+            ctx.fillStyle = g; ctx.fillRect(0, 0, 58, H);
+            g = ctx.createLinearGradient(W, 0, W - 58, 0);
+            g.addColorStop(0, "rgba(107, 95, 78, 0.26)"); g.addColorStop(1, "rgba(107, 95, 78, 0)");
+            ctx.fillStyle = g; ctx.fillRect(W - 58, 0, 58, H);
+          }
+
+          // 纸面：暖纸色、细噪点、四周旧纸内阴影
+          ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+          paperEdge();
+          for (var i = 0; i < 4200; i++) {
+            ctx.globalAlpha = 0.028 + Math.random() * 0.03;
+            ctx.fillStyle = Math.random() > 0.48 ? "#8A7B63" : "#FFFFFF";
+            ctx.fillRect(Math.random() * W, Math.random() * H, 1.6, 1.6);
+          }
+          ctx.globalAlpha = 1;
+
+          ctx.textAlign = "center";
+          ctx.textBaseline = "alphabetic";
+
+          // 眉题
+          setSpacing(12.6);
+          ctx.fillStyle = SOFT;
+          ctx.font = '400 36px "Noto Serif SC", serif';
+          ctx.fillText("私房菜 · PRIVATE CLUB", W / 2, 132);
+
+          // 主标题
+          setSpacing(0);
+          ctx.fillStyle = INKC;
+          ctx.font = '900 150px "Noto Serif SC", serif';
+          ctx.fillText("乔家大院", W / 2, 302);
+
+          // 副标题
+          setSpacing(10.8);
+          ctx.fillStyle = ACC;
+          ctx.font = '600 54px "Noto Serif SC", serif';
+          ctx.fillText("拼好饭·今晚菜单", W / 2, 398);
+
+          // 日期与主题
+          setSpacing(0);
+          ctx.fillStyle = DATEC;
+          ctx.font = '400 40px "Noto Serif SC", serif';
+          var dateText = eventAt
+            ? (eventAt.getFullYear() + "年" + (eventAt.getMonth() + 1) + "月" + eventAt.getDate() + "日 · " + WEEKCN[eventAt.getDay()] + " " + pad2(eventAt.getHours()) + ":" + pad2(eventAt.getMinutes()))
+            : "日子待定";
+          ctx.fillText(dateText, W / 2, 472);
+          var sepY = 532;
+          if (theme.name) {
+            ctx.fillText("主题《" + theme.name + "》", W / 2, 528);
+            sepY = 586;
+          }
+          if (theme.intro) {
+            // 介绍跟在主题下面，浅色小字，最多三行，超了收成省略号
+            setSpacing(0);
+            ctx.fillStyle = SOFT;
+            ctx.font = '400 34px "Noto Serif SC", serif';
+            var introLines = wrapText(ctx, theme.intro.replace(/\s*\n\s*/g, " "), rightX - leftX - 80).slice(0, 3);
+            if (introLines.length === 3) introLines[2] = ellipsize(introLines[2], rightX - leftX - 80);
+            introLines.forEach(function (ln, i) {
+              ctx.fillText(ln, W / 2, sepY + 16 + i * 52);
+            });
+            sepY += 16 + introLines.length * 52 + 22;
+            ctx.fillStyle = DATEC;
+            ctx.font = '400 40px "Noto Serif SC", serif';
+          }
+          jitterLine(leftX, rightX, sepY);
+
+          // 菜品：菜名左、做菜人右，同一基线；靠留白分行，不用引导线
+          var listTop = sepY + 92;
+          var maxBaseline = H - 232;
+          var rowH = 96;
+          if (subs.length > 1) rowH = Math.min(96, (maxBaseline - listTop) / (subs.length - 1));
+          var dishSize = rowH < 84 ? Math.max(38, Math.round(rowH * 0.58)) : 52;
+          var cookSize = rowH < 84 ? Math.max(28, Math.round(rowH * 0.42)) : 36;
+          subs.forEach(function (s, idx) {
+            var baseline = listTop + idx * rowH;
+            ctx.font = '400 ' + cookSize + 'px "Noto Serif SC", serif';
+            var cookText = ellipsize(s.cook, 250);
+            var cookW = ctx.measureText(cookText).width;
+            ctx.font = '600 ' + dishSize + 'px "Noto Serif SC", serif';
+            var dishText = ellipsize(s.dish, Math.max(180, rightX - cookW - 44 - leftX));
+            ctx.fillStyle = INKC;
+            ctx.textAlign = "left";
+            ctx.fillText(dishText, leftX, baseline);
+            ctx.fillStyle = SOFT;
+            ctx.font = '400 ' + cookSize + 'px "Noto Serif SC", serif';
+            ctx.textAlign = "right";
+            ctx.fillText(cookText, rightX, baseline);
+          });
+
+          // 左下角计数（离右下角印章安全区远远的）
+          ctx.textAlign = "left";
+          ctx.fillStyle = DATEC;
+          ctx.font = '400 36px "Noto Serif SC", serif';
+          ctx.fillText("共 " + subs.length + " 道菜", leftX, 1292);
+
+          // 印章：右下角 64px 见方，周围留空，不压任何字
+          var sealX = 916, sealY = 1256, sealS = 64;
+          ctx.save();
+          ctx.translate(sealX, sealY);
+          ctx.rotate(-0.03);
+          ctx.fillStyle = ACC;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(0, 0, sealS, sealS, 4); else ctx.rect(0, 0, sealS, sealS);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(244, 238, 225, 0.62)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(5, 5, sealS - 10, sealS - 10, 3); else ctx.rect(5, 5, sealS - 10, sealS - 10);
+          ctx.stroke();
+          ctx.fillStyle = PAPER;
+          ctx.font = '900 38px "Noto Serif SC", serif';
+          ctx.textAlign = "center";
+          ctx.fillText("乔", sealS / 2, 46);
+          ctx.restore();
+          setSpacing(0);
+        }
+
+        $("genBtn").addEventListener("click", function () {
+          var bm = $("boardMsg");
+          if (!subs.length) {
+            bm.textContent = "黑板上还没有菜，先等大家写几道再来生成。";
+            $("fName").focus();
+            return;
+          }
+          bm.textContent = "正在研磨铺纸……";
+          document.fonts.ready.then(function () {
+            drawBoard();
+            finishBoard(bm);
+          });
+        });
+
+        function finishBoard(bm) {
+          boardWrap.hidden = false;
+          bm.textContent = "菜单板画好了。下载下来，发到群里邀大家认领自己的菜吧。";
+          try {
+            $("boardDownload").href = canvas.toDataURL("image/png");
+          } catch (err) { /* 个别环境不支持则仅展示 */ }
+          boardWrap.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+        }
+      })();
+    </script>
+  </body>
+</html>
