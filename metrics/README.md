@@ -25,3 +25,13 @@ Modules: board, wish (including project tasks), vote, drink, fund. Only the even
 Anonymous devices approximate people. Data starts at installation; created and active board counts are not the database's total inventory. Ad blockers, offline clients, browser storage resets, ingestion caps and public endpoint spoofing can affect counts. This is product usage analytics, not an audit or payment ledger.
 
 Validation: mocked browser ingestion verifies payloads contain no codes/URL/content/amounts, and existing board footer and six viewport/theme smoke tests pass. Real collector accepted an isolated customMetrics healthcheck (excluded from engagement counts), and all four workbook queries were executed successfully after fixing quoted Chinese column identifiers. Website activity will appear only when users load the instrumented pages.
+
+## Standalone metrics view
+
+`/metrics/` renders the mobile dashboard; `GET /api/metrics` returns aggregates only to the administrator. Repository `server.cjs` replaces the earlier staging-only static server and must be included in Azure deployments. Node 24 provides built-in fetch; there are no server packages.
+
+The App Service system-assigned identity has Monitoring Reader on the Application Insights resource. `METRICS_APP_ID` selects that resource. No read token is shipped to the browser. Responses are private/no-store; internal aggregate caching lasts one minute; backend failures return 503 instead of invented zero counts.
+
+Login setup is pending: register a single-tenant Entra web app with callback `https://blackboard-club.azurewebsites.net/.auth/login/aad/callback`, configure App Service Easy Auth with global AllowAnonymous so normal boards remain public, and set `METRICS_OWNER_ID` to the administrator's verified object ID. Set `METRICS_AUTH_MODE=azure` only AFTER Easy Auth is enabled. Platform authentication must sanitize `x-ms-client-principal`; the application then checks the AAD provider and exact owner object ID. A board Owner code does not authorize global statistics. While login setup is incomplete, the API denies every request and the page explains that access is not open yet.
+
+Local validation used mocked identity/query responses to check authorized owner, other user and anonymous access, fail-closed behavior before auth setup, mobile widths 320/390/430, empty states and rendering. Managed identity querying and real administrator login require separate verification after platform configuration.
