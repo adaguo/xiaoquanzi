@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@microsoft/applicationinsights-web": "^3.4.5",
+    "esbuild": "^0.28.2"
+  },
+  "private": true,
+  "scripts": {
+    "build": "esbuild source.js --bundle --minify --outfile=../assets/metrics.js"
+  }
+}

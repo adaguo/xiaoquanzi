@@ -1084,6 +1084,7 @@
       </footer>
     </main>
 
+    <script src="/assets/metrics.js"></script>
     <script>
       (function () {
         "use strict";
@@ -1168,6 +1169,7 @@
             club.hidden = false;
             // 先把同步接上，再做角色渲染：院内任何一处渲染小毛病，都不能把整条同步链路带停
             startBoardSync();
+            if (window.XQMetrics) window.XQMetrics.enter("qjdy", host);
             try { applyRole(); } catch (e) { /* 角色控件没画好也不影响看板 */ }
             window.scrollTo(0, 0);
             initReveals();
@@ -1369,6 +1371,7 @@
             })
             .then(function (ok) {
               if (!ok) failVote(s);
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "vote", action: "vote" });
             })
             .catch(function () {
               failVote(s);
@@ -1812,6 +1815,7 @@
             .then(function (ok) {
               wishSubmitting = false;
               if (!ok) rollbackWish();
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "publish" });
             })
             .catch(function () {
               wishSubmitting = false;
@@ -1905,6 +1909,7 @@
             })
             .then(function (ok) {
               if (!ok) { rollbackClaim(); return; }
+              if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "claim" });
               readWishRow()
                 .then(function (arr) {
                   var next = arr.filter(function (x) { return String(x.id || "") !== w.id; });
@@ -2125,6 +2130,7 @@
             .then(function (ok) {
               fundSubmitting = false;
               if (!ok) rollbackFund();
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "fund", action: "contribute" });
             })
             .catch(function () {
               fundSubmitting = false;

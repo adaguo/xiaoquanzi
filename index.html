@@ -1569,6 +1569,7 @@
     </dialog>
     <div class="toast" id="contactToast" role="status" hidden></div>
 
+    <script src="/assets/metrics.js"></script>
     <script>
       (function () {
         "use strict";
@@ -1933,6 +1934,7 @@
               if (data === false) throw new Error("codes");
               var codes = { member: cfg.member, host: cfg.host };
               saveLocalCodes(bid, codes);
+              if (window.XQMetrics) window.XQMetrics.track("board_created", { board: bid, role: "owner" });
               return { bid: bid, meta: meta, codes: codes };
             }, function () {
               // 暗号没在服务端登记上：把刚建的几行清掉，这次开板作废
@@ -2623,6 +2625,7 @@
             $("board").hidden = false;
             applyRole();
             startBoardSync();
+            if (window.XQMetrics) window.XQMetrics.enter(BID, role);
             window.scrollTo(0, 0);
             initReveals();
           }
@@ -3221,6 +3224,7 @@
             })
             .then(function (ok) {
               if (!ok) failVote(s);
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "vote", action: "vote" });
             })
             .catch(function () {
               failVote(s);
@@ -4029,6 +4033,7 @@
             .then(function (ok) {
               wishSubmitting = false;
               if (!ok) rollbackWish();
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "publish" });
             })
             .catch(function () {
               wishSubmitting = false;
@@ -4119,6 +4124,7 @@
             })
             .then(function (ok) {
               if (!ok) { rollbackClaim(); return; }
+              if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "claim" });
               readWishRow()
                 .then(function (arr) {
                   var next = arr.map(function (x) {
@@ -4332,6 +4338,7 @@
             .then(function (ok) {
               fundSubmitting = false;
               if (!ok) rollbackFund();
+              else if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "fund", action: "contribute" });
             })
             .catch(function () {
               fundSubmitting = false;
