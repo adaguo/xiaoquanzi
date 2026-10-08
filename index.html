@@ -2239,6 +2239,18 @@
         /* ---------- 模板（页面内置配置，不占板位、不带任何真实板数据） ---------- */
         var TEMPLATES = [
           {
+            id: "project", name: "项目协作", tag: "项目模板",
+            desc: "写目标、认领任务，一起推进。",
+            skin: "molv",
+            modules: { vote: true, wish: true, drink: false, fund: false },
+            moduleNames: { board: "项目进展", wish: "任务", vote: "优先级投票" },
+            drinks: [],
+            boardTheme: "项目目标",
+            boardIntro: "把要做的事写进任务，认领后显示在黑板。投票决定先做什么。",
+            wishEmpty: "添加第一项任务。",
+            voteNote: "为最想优先推进的任务投票。"
+          },
+          {
             id: "shokudo", name: "深夜食堂", tag: "聚餐模板",
             desc: "黑板、投票、许愿池、酒水单、基金池，全开。",
             skin: "mitao",
