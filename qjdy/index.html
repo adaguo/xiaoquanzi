@@ -181,7 +181,7 @@
         border-radius: 3px;
       }
       .hero nav {
-        display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6rem 2.4rem;
+        display: flex; justify-content: center; flex-wrap: nowrap; gap: .25rem;
         margin-top: clamp(1.8rem, 5vw, 2.6rem);
       }
       .hero nav a {
@@ -761,6 +761,7 @@
       /* 审查修复：可读提示、触控范围与章节导航 */
       .section-nav, .entry-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:1rem auto; }
       .section-nav a, .entry-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.5rem .85rem; border:1px solid var(--line-strong); border-radius:24px; color:var(--ink-soft); text-decoration:none; }
+      .hero .section-nav a { border:0; border-radius:0; padding:.4rem .5rem; font-size:.9rem; letter-spacing:0; white-space:nowrap; }
       .section-nav a:focus-visible, .entry-actions a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
       .enter-line a { display:inline-flex; align-items:center; min-height:44px; padding:.4rem .65rem; color:var(--ink-soft); text-underline-offset:.25em; }
       .copy-btn { min-height:44px; }
@@ -825,11 +826,10 @@
           <figcaption>秋 · 柿子红了</figcaption>
         </figure>
         <nav class="section-nav" aria-label="院内导航">
-          <a href="#drinks"><span class="n">壹</span>酒水单</a>
-          <a href="#thursday"><span class="n">贰</span>拼好饭</a>
+          <a href="#drinks">酒水单</a>
+          <a href="#thursday">拼好饭</a>
           <a href="#wishBoard">许愿池</a>
           <a href="#fundSection">大院基金</a>
-          <a href="/">返回小圈子</a>
         </nav>
       </header>
 
@@ -1079,6 +1079,7 @@
         <p class="f1 hand">山有小口，仿佛若有光</p>
         <p>乔家大院 PRIVATE CLUB · 私房菜 · 拼好饭</p>
         <p>不求全，但求真味。</p>
+        <p class="enter-line"><a href="/">返回小圈子</a></p>
       </footer>
     </main>
 
