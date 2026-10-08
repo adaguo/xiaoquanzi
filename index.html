@@ -870,18 +870,15 @@
       .qr-zone .form-msg { color: var(--terra); }
 
       /* ---------- 最近访问 / 开板二次确认 / 酒水单 ---------- */
-      .myboard-row {
-        display: grid; grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center; gap: 1rem; padding: 1rem 0;
-        border-bottom: 1px solid var(--line);
-      }
-      .myboard-row:last-child { border-bottom: none; }
-      .myboard-info { min-width: 0; display: grid; gap: .25rem; }
-      .myboard-name { font-family: var(--hand); font-size: 1.25rem; color: var(--ink); overflow-wrap: anywhere; }
-      .myboard-date { font-size: .8rem; color: var(--ink-faint); }
-      .myboard-actions { display: grid; justify-items: stretch; }
-      .myboard-row .mini-btn { width: auto; min-width: 4rem; min-height: 44px; padding: .35rem .7rem; }
-      .myboard-row .myboard-remove { border-color: transparent; background: transparent; color: var(--ink-soft); font-size: .8rem; }
+      #myBoardsBox .join-head { text-align:left; font-size:1rem; margin-bottom:.6rem; }
+      #myBoardsBox .join-head small { font-family:var(--body); font-size:.75rem; letter-spacing:0; margin-left:.5rem; color:var(--ink-faint); }
+      .myboard-row { display:flex; align-items:center; gap:.25rem; border-bottom:1px solid var(--line); }
+      .myboard-row:last-child { border-bottom:none; }
+      .myboard-open { display:flex; flex:1; min-width:0; align-items:center; justify-content:space-between; gap:1rem; min-height:56px; padding:.5rem 0; border:0; background:transparent; color:var(--ink); text-align:left; cursor:pointer; }
+      .myboard-name { font-family:var(--hand); font-size:1.2rem; overflow-wrap:anywhere; }
+      .myboard-arrow { color:var(--terra); font-size:1.3rem; }
+      .myboard-row .myboard-remove { border:0; background:transparent; color:var(--ink-soft); min-width:44px; min-height:44px; padding:0; font-size:1.2rem; cursor:pointer; }
+      .myboard-open:hover .myboard-name { color:var(--terra); }
       .dup-acts { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.4rem; }
       .drink-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem; }
       .drink-row {
@@ -1118,8 +1115,7 @@
         </form>
 
         <div class="join-box" id="myBoardsBox" hidden>
-          <p class="join-head">最近访问</p>
-          <p class="form-note" style="text-align:center">本机记录</p>
+          <p class="join-head">最近访问 <small>本机</small></p>
           <div id="myBoardsList"></div>
           <p class="form-msg" id="myBoardsMsg" role="status"></p>
         </div>
@@ -1872,19 +1868,22 @@
             var nm = document.createElement("span");
             nm.className = "myboard-name";
             nm.textContent = b.name;
-            var dt = document.createElement("span");
-            dt.className = "myboard-date";
-            var d = new Date(b.at || Date.now());
-            dt.textContent = (b.role === "host" ? "主理人 · " : b.role === "member" ? "成员 · " : "") + (d.getMonth() + 1) + "月" + d.getDate() + "日";
             var btn = document.createElement("button");
             btn.type = "button";
-            btn.className = "mini-btn";
-            btn.textContent = "打开";
+            btn.className = "myboard-open";
+            btn.setAttribute("aria-label", "打开「" + b.name + "」");
+            btn.appendChild(nm);
+            var arrow = document.createElement("span");
+            arrow.className = "myboard-arrow";
+            arrow.textContent = "›";
+            arrow.setAttribute("aria-hidden", "true");
+            btn.appendChild(arrow);
             btn.addEventListener("click", function () { goBoard(b.bid, b.role || null); });
             var act = document.createElement("button");
             act.type = "button";
             act.className = "mini-btn myboard-remove";
-            act.textContent = "移除";
+            act.textContent = "×";
+            act.title = "移除记录";
             act.setAttribute("aria-label", "从本机记录移除「" + b.name + "」，保留黑板内容");
             act.addEventListener("click", function () {
               forgetBoard(b.bid);
@@ -1892,16 +1891,8 @@
               var m = $("myBoardsMsg");
               if (m) m.textContent = "已移除本机记录，黑板内容保留。";
             });
-            var info = document.createElement("div");
-            info.className = "myboard-info";
-            info.appendChild(nm);
-
-            var actions = document.createElement("div");
-            actions.className = "myboard-actions";
-            actions.appendChild(btn);
-            actions.appendChild(act);
-            row.appendChild(info);
-            row.appendChild(actions);
+            row.appendChild(btn);
+            row.appendChild(act);
             listEl.appendChild(row);
           });
         }
