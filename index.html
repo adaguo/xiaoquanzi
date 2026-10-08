@@ -2303,7 +2303,7 @@
 
         function directLink(bid, code) {
           if (!/^https?:$/.test(location.protocol) || !/^[A-Za-z0-9]{4,16}$/.test(bid)) return "";
-          return location.origin + "/" + encodeURIComponent(bid) + "/" + (code ? "?c=" + encodeURIComponent(code) : "");
+          return location.origin + "/" + encodeURIComponent(bid) + "/";
         }
         function openClone(t) {
           cloneTpl = t;
