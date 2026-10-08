@@ -876,8 +876,7 @@
       .myboard-row:last-child { border-bottom:none; }
       .myboard-open { display:flex; flex:1; min-width:0; align-items:center; justify-content:space-between; gap:1rem; min-height:56px; padding:.5rem 0; border:0; background:transparent; color:var(--ink); text-align:left; cursor:pointer; }
       .myboard-name { font-family:var(--hand); font-size:1.2rem; overflow-wrap:anywhere; }
-      .myboard-arrow { color:var(--terra); font-size:1.3rem; }
-      .myboard-row .myboard-remove { border:0; background:transparent; color:var(--ink-soft); min-width:44px; min-height:44px; padding:0; font-size:1.2rem; cursor:pointer; }
+      .myboard-role { flex:none; font-family:var(--body); font-size:.75rem; color:var(--ink-soft); letter-spacing:0; }
       .myboard-open:hover .myboard-name { color:var(--terra); }
       .dup-acts { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.4rem; }
       .drink-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.4rem; }
@@ -1873,26 +1872,14 @@
             btn.className = "myboard-open";
             btn.setAttribute("aria-label", "打开「" + b.name + "」");
             btn.appendChild(nm);
-            var arrow = document.createElement("span");
-            arrow.className = "myboard-arrow";
-            arrow.textContent = "›";
-            arrow.setAttribute("aria-hidden", "true");
-            btn.appendChild(arrow);
+            if (b.role === "host" || b.role === "member") {
+              var role = document.createElement("span");
+              role.className = "myboard-role";
+              role.textContent = b.role === "host" ? "Owner" : "Member";
+              btn.appendChild(role);
+            }
             btn.addEventListener("click", function () { goBoard(b.bid, b.role || null); });
-            var act = document.createElement("button");
-            act.type = "button";
-            act.className = "mini-btn myboard-remove";
-            act.textContent = "×";
-            act.title = "移除记录";
-            act.setAttribute("aria-label", "从本机记录移除「" + b.name + "」，保留黑板内容");
-            act.addEventListener("click", function () {
-              forgetBoard(b.bid);
-              renderMyBoards();
-              var m = $("myBoardsMsg");
-              if (m) m.textContent = "已移除本机记录，黑板内容保留。";
-            });
             row.appendChild(btn);
-            row.appendChild(act);
             listEl.appendChild(row);
           });
         }
