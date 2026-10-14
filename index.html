@@ -1018,6 +1018,9 @@
       /* 审查修复：可读提示、触控范围与章节导航 */
       .section-nav, .entry-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:1rem auto; }
       .section-nav a, .entry-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.5rem .85rem; border:1px solid var(--line-strong); border-radius:24px; color:var(--ink-soft); text-decoration:none; }
+      #board .section-nav a { border-radius:6px; padding:.4rem .65rem; color:var(--ink); font-size:.9rem; letter-spacing:0; background:color-mix(in srgb, var(--paper) 92%, var(--ink) 8%); max-width:100%; overflow-wrap:anywhere; }
+      #board .section-nav a:hover { border-color:var(--accent); color:var(--accent); }
+      #rankZone { scroll-margin-top:5rem; }
       .section-nav a:focus-visible, .entry-actions a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
       .enter-line a { display:inline-flex; align-items:center; min-height:44px; padding:.4rem .65rem; color:var(--ink-soft); text-underline-offset:.25em; }
       .copy-btn { min-height:44px; }
@@ -1248,11 +1251,6 @@
 
     <!-- ======== 板内 ======== -->
     <main id="board" hidden>
-      <nav class="section-nav wrap" aria-label="圈内导航">
-        <a href="#gathering">黑板</a><a href="#wishBoard" data-module="wish">许愿池</a>
-        <a href="#drinksSection" data-module="drink">酒水单</a><a href="#fundSection" data-module="fund">基金池</a>
-        <a href="/">首页 · 换圈子</a>
-      </nav>
       <header class="hero wrap">
         <div class="top-row">
           <span class="only-wide">小圈子 · XIAO QUAN ZI</span>
@@ -1262,6 +1260,13 @@
         <h1 id="teamTitle">小圈子</h1>
         <p class="team-intro" id="teamIntro" hidden></p>
         <p class="tagline">这块板，只给圈里人看。</p>
+        <nav class="section-nav" aria-label="圈内导航">
+          <a href="#gathering" data-module="board">黑板</a>
+          <a href="#wishBoard" data-module="wish">许愿池</a>
+          <a href="#rankZone" data-module="vote">投票</a>
+          <a href="#drinksSection" data-module="drink">酒水单</a>
+          <a href="#fundSection" data-module="fund">基金池</a>
+        </nav>
       </header>
 
       <!-- ======== 本周黑板 ======== -->
@@ -1533,6 +1538,7 @@
         <p>小 圈 子 · XIAO QUAN ZI</p>
         <p>分享给新朋友：板编号发过去，凭暗号进门。</p>
         <p>一块黑板，一个小圈子。</p>
+        <p class="enter-line"><a href="/">首页 · 换圈子</a></p>
         <p class="foot-sign">用着喜欢，<button type="button" class="sign-link tip-toggle" id="boardTipToggle" aria-controls="boardTipPanel" aria-expanded="false">请掌柜喝杯咖啡</button><span class="sign-dot" aria-hidden="true"> · </span><button type="button" class="sign-link contact-open">联系掌柜</button></p>
         <div class="tip-panel" id="boardTipPanel" hidden>
           <p class="tip-words">金额随意，心意领了</p>
@@ -2785,6 +2791,11 @@
           applyModuleNames();
         }
         function applyModuleNames() {
+          var navNames = { board: "黑板", wish: "许愿池", vote: "投票", drink: "酒水单", fund: "基金池" };
+          document.querySelectorAll("#board .section-nav [data-module]").forEach(function (link) {
+            var key = link.dataset.module;
+            link.textContent = (META && META.moduleNames && META.moduleNames[key]) || navNames[key];
+          });
           $("secBoardTitle").textContent = moduleName("board");
           $("wishTitle").textContent = moduleName("wish");
           $("drinkTitle").textContent = moduleName("drink");
