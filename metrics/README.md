@@ -18,7 +18,7 @@ Events:
 - `board_created`: codes registered after board creation.
 - `module_view`: visible section, once per module per board entry.
 - `module_action`: enabled button interaction in a module; does not mean the operation succeeded.
-- `module_success`: confirmed successful vote, wish/task publication, claim written to the board, or fund contribution. Claim success means board assignment saved; its separate wish update can still fail.
+- `module_success`: confirmed successful proposal support, result vote, wish/task publication, claim written to the board, completion, assignment release, or fund contribution. Claim success means board assignment saved; its separate wish update can still fail.
 
 Modules: board, wish (including project tasks), vote, drink, fund. Only the event name, random anonymous device ID, board ID, verified role, module and fixed action enum are sent. No URL/query, codes, names, free text or contribution amounts. SDK automatic request, exception, route and page telemetry is disabled; unsupported event types and additional properties are discarded. Analytics does not grant any board permissions.
 

@@ -788,6 +788,9 @@
         .link-box input[type="text"] { width:0; min-width:0; flex:1 1 0; }
         .mod-pills { max-width:100%; flex-wrap:wrap; }
       }
+      .bb-phase { font-size:.9rem; opacity:.75; margin:1rem 0 .3rem; }
+      .task-status { grid-column:1; grid-row:3; font-size:.8rem; opacity:.8; }
+      .task-complete { grid-column:2; grid-row:3; justify-self:end; min-height:44px; max-width:100%; }
     </style>
   </head>
   <body>
@@ -1361,6 +1364,7 @@
                 }
               }
               if (idx < 0) throw new Error("gone");
+              if (!taskIsComplete(dishes[idx]) || !resultVoteEnabled()) throw new Error("not_complete");
               var d = {};
               for (var k in dishes[idx]) d[k] = dishes[idx][k];
               if (!d.id && s.id) d.id = s.id;
@@ -1466,7 +1470,7 @@
               seen[did] = true;
               if (pendingRemovals[did]) continue; // 本地已撤回、板上还没擦掉的，先不显示
               if (pendingDishes[did]) { // 本地改过的，先用新写法；票数仍以板上为准
-                d = { id: did, cook: pendingDishes[did].cook, dish: pendingDishes[did].dish, desc: pendingDishes[did].desc, votes: (typeof d.votes === "number") ? d.votes : 0 };
+                d = Object.assign({}, d, pendingDishes[did], { votes: (typeof d.votes === "number") ? d.votes : 0 });
               }
             }
             eff.push(d);
@@ -1483,6 +1487,7 @@
             knownKeys[key] = true;
             return {
               id: id, key: key, cook: cook, dish: dish, desc: desc, fresh: fresh,
+              status: d.status || "in_progress", sourceWishId: d.sourceWishId || "", sourceWish: d.sourceWish || null,
               voted: !!(votedIds[key] || (id && votedStore[id])),
               mine: !!id && ownIds.indexOf(id) >= 0,
               votes: ((d && typeof d.votes === "number") ? d.votes : 0) + (pendingVotes[key] ? 1 : 0)
@@ -1668,6 +1673,13 @@
               delBtn.addEventListener("click", function () { removeWish(w, delBtn); });
               acts.appendChild(delBtn);
             }
+            if (proposalVoteEnabled() && (!w.kind || w.kind === "wish")) {
+              var support = document.createElement("button"); support.type = "button"; support.className = "wish-claim proposal-vote";
+              var hasSupported = (Array.isArray(w.supporters) ? w.supporters : []).indexOf(supportDevice()) >= 0;
+              support.textContent = (hasSupported ? "已支持" : "支持") + " · " + (Number(w.supportVotes) || 0);
+              support.disabled = hasSupported || !!w.claimedBy;
+              support.addEventListener("click", function () { supportWish(w, support); }); acts.appendChild(support);
+            }
             row.appendChild(acts);
             if (claimingId === w.id) {
               var conf = document.createElement("div");
@@ -1825,6 +1837,7 @@
 
         // 删掉自己许的愿：点两下确认，先从栏上消失，再同步；同步不上就放回来
         function removeWish(w, btn) {
+          if (w.claimedBy || subs.some(function (t) { return t.sourceWishId === w.id; })) { $("wishMsg").textContent = "先撤回认领，再删除提议。"; return; }
           if (!btn.dataset.armed) {
             btn.dataset.armed = "1";
             btn.dataset.label = btn.textContent;
@@ -1883,7 +1896,7 @@
           pendingWishRemovals[w.id] = true;
           renderWishes();
           var nid = newDishId();
-          var newDish = { id: nid, cook: claimant, dish: w.dish, desc: "", votes: 0 };
+          var newDish = { id: nid, cook: claimant, dish: w.dish, desc: "", votes: 0, status: "in_progress", sourceWishId: w.id, sourceWish: Object.assign({}, w) };
           pendingDishes[nid] = newDish;
           ownIds.push(nid);
           lsSet(OWN_KEY, ownIds);
@@ -1903,6 +1916,7 @@
           // 先把菜同步上黑板；菜稳了，再把愿望从许愿池同步撤下
           readDishes()
             .then(function (cur) {
+              if (cur.dishes.some(function (d) { return d.sourceWishId === w.id; })) throw new Error("already_claimed");
               cur.dishes.push(newDish);
               delete pendingDishes[nid]; // 交给板上那一份，本地不再另盖一层
               return sbSave({ theme: cur.theme, style: cur.style, dishes: cur.dishes });
@@ -2528,7 +2542,10 @@
             empty.textContent = "黑板还空着——今晚谁先来写第一道菜？";
             list.appendChild(empty);
           } else {
-            subs.forEach(function (s) {
+            var lastPhase = null;
+            subs.slice().sort(function (a,b) { return Number(taskIsComplete(a)) - Number(taskIsComplete(b)); }).forEach(function (s) {
+              var phase=taskIsComplete(s);
+              if(phase!==lastPhase){var heading=document.createElement("p");heading.className="bb-phase";heading.textContent=phase?"已上桌":"准备中";list.appendChild(heading);lastPhase=phase;}
               var row = document.createElement("div");
               row.className = "bb-row";
               var main = document.createElement("div");
@@ -2576,7 +2593,14 @@
                 descSpan.textContent = s.desc;
                 main.appendChild(descSpan);
               }
-              if (s.mine) {
+              if ((s.mine || isHost) && !taskIsComplete(s)) {
+                var complete = document.createElement("button");
+                complete.type = "button"; complete.className = "bb-act task-complete";
+                complete.textContent = isPotluck() ? "已上桌" : "标记完成";
+                complete.addEventListener("click", function () { completeTask(s, complete); });
+                main.appendChild(complete);
+              }
+              if (s.mine || isHost) {
                 // 自己写的菜：可以改，也可以撤（只有提交的那台设备看得见）
                 var acts = document.createElement("div");
                 acts.className = "bb-actions";
@@ -2589,22 +2613,27 @@
                 var awayBtn = document.createElement("button");
                 awayBtn.type = "button";
                 awayBtn.className = "bb-act";
-                awayBtn.textContent = "撤回";
+                awayBtn.textContent = "撤回认领";
                 awayBtn.setAttribute("aria-label", "撤回「" + s.dish + "」");
+                awayBtn.disabled = taskIsComplete(s);
                 awayBtn.addEventListener("click", function () { withdrawDish(s, awayBtn); });
                 acts.appendChild(editBtn);
-                acts.appendChild(awayBtn);
+                if (taskIsComplete(s)) {
+                  var deleteBtn=document.createElement("button"); deleteBtn.type="button"; deleteBtn.className="bb-act task-delete"; deleteBtn.textContent="删除记录";
+                  deleteBtn.addEventListener("click", function () { deleteCompletedTask(s, deleteBtn); }); acts.appendChild(deleteBtn);
+                }
+                if (!taskIsComplete(s)) acts.appendChild(awayBtn);
                 main.appendChild(acts);
               }
               var voteBtn = document.createElement("button");
               voteBtn.type = "button";
               voteBtn.className = "bb-vote" + (s.voted ? " on" : "");
-              voteBtn.textContent = s.voted ? "已投票" : "投一票";
-              if (s.voted) voteBtn.disabled = true;
+              voteBtn.textContent = !taskIsComplete(s) ? "上桌后投票" : s.voted ? "已投票" : "投一票";
+              if (s.voted || !taskIsComplete(s)) voteBtn.disabled = true;
               voteBtn.setAttribute("aria-pressed", s.voted ? "true" : "false");
               voteBtn.setAttribute("aria-label", "给「" + s.dish + "」投票");
               voteBtn.addEventListener("click", function () {
-                if (s.voted) return;
+                if (s.voted || !taskIsComplete(s)) return;
                 s.voted = true;
                 votedIds[s.key] = true;
                 if (s.id) { votedStore[s.id] = true; lsSet(VOTED_KEY, votedStore); } // 记在本机：刷新后这道菜也不能再投
@@ -2637,8 +2666,9 @@
             box.appendChild(empty);
             return;
           }
-          var sorted = subs.map(function (s, i) { return { s: s, i: i }; })
+          var sorted = subs.filter(taskIsComplete).map(function (s, i) { return { s: s, i: i }; })
             .sort(function (a, b) { return (b.s.votes - a.s.votes) || (a.i - b.i); });
+          if (!sorted.length) { box.textContent = "完成后再来投结果票。"; return; }
           var topVotes = sorted[0].s.votes;
           sorted.forEach(function (entry, r) {
             var s = entry.s;
@@ -2706,7 +2736,62 @@
         $("cancelEditBtn").addEventListener("click", function () { endEdit("不改了，照旧。"); });
 
         // 撤回自己的菜：点两下确认，从小黑板上删掉，同步给所有人
+        function taskIsComplete(t) { return t && t.status === "completed"; }
+        function isPotluck() { return true; }
+        function resultVoteEnabled() { return true; }
+        function proposalVoteEnabled() { return true; }
+        function supportDevice() {
+          var key = NAME_KEY + "_support_device", id = lsGet(key, "");
+          if (!id) { id = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2); lsSet(key, id); }
+          return id;
+        }
+        function supportWish(w, btn) {
+          btn.disabled = true;
+          readWishRow().then(function (arr) {
+            var found = arr.find(function (x) { return x.id === w.id; });
+            if (!found || found.claimedBy) throw new Error("unavailable");
+            var voters = Array.isArray(found.supporters) ? found.supporters.slice() : [];
+            if (voters.indexOf(supportDevice()) >= 0) return true;
+            voters.push(supportDevice()); found.supporters = voters;
+            found.supportVotes = (Number(found.supportVotes) || 0) + 1;
+            return persistWishes(arr);
+          }).then(function (ok) { if (!ok) throw new Error("save"); if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "support" }); renderWishes(); renderRank(); })
+            .catch(function () { btn.disabled = false; $("wishMsg").textContent = "支持票没记上，请刷新后再试。"; });
+        }
+        function deleteCompletedTask(t, btn) {
+          if (!window.confirm("删除这条完成记录？此操作不会撤回认领。")) return;
+          btn.disabled=true;
+          readDishes().then(function(cur){
+            var task=cur.dishes.find(function(d){return String(d.id||"")===t.id;});
+            if(!task||!taskIsComplete(task))throw new Error("not_complete");
+            return readWishRow().then(function(arr){
+              var wish=arr.find(function(w){return w.id===task.sourceWishId;});
+              if(!wish)return true;
+              wish.completedAt=task.completedAt||Date.now();return persistWishes(arr);
+            }).then(function(ok){if(!ok)throw new Error("history");return sbSave({dishes:cur.dishes.filter(function(d){return String(d.id||"")!==t.id;})});});
+          }).then(function(ok){if(!ok)throw new Error("delete");$("wishMsg").textContent="完成记录已删除，提议历史保留。";renderWishes();})
+            .catch(function(){btn.disabled=false;$("wishMsg").textContent="删除未完成，请刷新后重试。";});
+        }
+        function completeTask(t, btn) {
+          btn.disabled = true;
+          readDishes().then(function (cur) {
+            var task = t.id ? cur.dishes.find(function (d) { return String(d.id || "") === t.id; }) : cur.dishes[Number(t.key.replace("old-", ""))];
+            if (task && !task.id) task.id = newDishId();
+            if (!task) throw new Error("gone");
+            task.status = "completed"; task.completedAt = Date.now();
+            return sbSave({ dishes: cur.dishes });
+          }).then(function (ok) { if (!ok) throw new Error("save"); if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "board", action: "complete" }); renderWishes(); $("wishMsg").textContent = isPotluck() ? "已上桌，可以投结果票了。" : "已完成，记录留在黑板上。"; })
+            .catch(function () { btn.disabled = false; $("wishMsg").textContent = "完成状态没保存，请重试。"; });
+        }
+        function renderProposalRank(box) {
+          var wishes = effWishes().filter(function (w) { return !w.kind || w.kind === "wish"; }).sort(function (a,b) { return (Number(b.supportVotes)||0)-(Number(a.supportVotes)||0); });
+          var note = $("voteNote"); if (note) note.textContent = "在提议旁投支持票，决定先做什么。";
+          if (!wishes.length) { box.textContent = "还没有提议。"; return; }
+          wishes.forEach(function (w) { var row=document.createElement("div"); row.className="rank-row"; row.textContent=w.dish+" · "+(Number(w.supportVotes)||0)+" 票"; box.appendChild(row); });
+        }
         function withdrawDish(s, btn) {
+          if (taskIsComplete(s)) return;
+
           if (!btn.dataset.armed) {
             btn.dataset.armed = "1";
             btn.dataset.label = btn.textContent;
@@ -2733,22 +2818,27 @@
             sbLoad();
             $("formMsg").textContent = "没撤成——小黑板暂时联系不上，「" + s.dish + "」还在板上，再试一次。";
           }
-          readDishes()
-            .then(function (cur) {
-              var dishes = cur.dishes.filter(function (d) { return !d || String(d.id || "") !== s.id; });
-              delete pendingRemovals[s.id]; // 交给板上那一份，本地不再遮着它
-              return sbSave({ dishes: dishes });
-            })
-            .then(function (ok) {
-              if (ok) {
-                ownIds = ownIds.filter(function (oid) { return oid !== s.id; });
-                lsSet(OWN_KEY, ownIds);
-                if (editingId === s.id) endEdit("「" + s.dish + "」撤回了。");
-              } else {
-                fail();
-              }
-            })
-            .catch(fail);
+          readDishes().then(function (cur) {
+            var task = cur.dishes.find(function (d) { return String(d.id || "") === s.id; });
+            if (!task || taskIsComplete(task)) throw new Error("gone");
+            return readWishRow().then(function (arr) {
+              var wish = arr.find(function (w) { return w.id === task.sourceWishId || w.taskId === task.id || (!task.sourceWishId && w.dish === task.dish && w.claimedBy === task.cook); });
+              if (!wish) { wish = Object.assign({}, task.sourceWish || {}, { id: task.sourceWishId || newWishId(), dish: task.dish, wisher: (task.sourceWish && task.sourceWish.wisher) || task.cook, kind: "wish" }); arr.unshift(wish); }
+              delete wish.claimedBy; delete wish.taskId; delete wish.completedAt;
+              wish.previousResultVotes = Number(task.votes) || 0;
+              return persistWishes(arr).then(function (ok) {
+                if (!ok) throw new Error("restore");
+                return sbSave({ dishes: cur.dishes.filter(function (d) { return String(d.id || "") !== s.id; }) });
+              });
+            });
+          }).then(function (ok) {
+            if (!ok) throw new Error("remove");
+            delete pendingRemovals[s.id];
+            ownIds = ownIds.filter(function (id) { return id !== s.id; }); lsSet(OWN_KEY, ownIds);
+            rebuildBoard(); renderWishes();
+            if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "board", action: "release" });
+            $("wishMsg").textContent = "已撤回认领，提议回到池里，支持票保留。";
+          }).catch(function () { delete pendingRemovals[s.id]; rebuildBoard(); sbLoad(); wishLoad(); $("wishMsg").textContent = "撤回未完成，请刷新后重试，原记录保留。"; });
         }
 
         $("subForm").addEventListener("submit", function (e) {
@@ -2785,7 +2875,7 @@
                 var old = cur.dishes[idx];
                 cur.dishes[idx] = {
                   id: targetId, cook: cook, dish: dish, desc: (typeof old.desc === "string") ? old.desc : "",
-                  votes: (typeof old.votes === "number") ? old.votes : 0
+                  status: old.status, sourceWishId: old.sourceWishId, sourceWish: old.sourceWish, votes: (typeof old.votes === "number") ? old.votes : 0
                 };
                 delete pendingDishes[targetId]; // 交给板上那一份，本地不再另盖一层
                 return sbSave({ dishes: cur.dishes });
@@ -2820,7 +2910,7 @@
 
           // 新菜：先写上本地黑板（立刻看得见，粉笔一笔笔写出来），再同步小黑板；同步不上就把菜收回来
           var nid = newDishId();
-          var newDish = { id: nid, cook: cook, dish: dish, desc: "", votes: 0 };
+          var newDish = { id: nid, cook: cook, dish: dish, desc: "", votes: 0, status: "in_progress" };
           pendingDishes[nid] = newDish;
           ownIds.push(nid); // 先记在本机账本里，「编辑」「撤回」立刻就出现
           lsSet(OWN_KEY, ownIds);

@@ -1046,6 +1046,9 @@
       }
       dialog.contact-backdrop { margin:0; border:0; width:100%; height:100dvh; max-width:none; max-height:none; color:var(--ink); }
       dialog.contact-backdrop::backdrop { background:transparent; }
+      .bb-phase { font-size:.9rem; opacity:.75; margin:1rem 0 .3rem; }
+      .task-status { grid-column:1; grid-row:3; font-size:.8rem; opacity:.8; }
+      .task-complete { grid-column:2; grid-row:3; justify-self:end; min-height:44px; max-width:100%; }
     </style>
   </head>
   <body>
@@ -1429,6 +1432,10 @@
               <p class="form-note" id="voteNote" style="margin:0 0 0.8rem">在黑板上投票，得票最高者居首。</p>
               <div id="rankList">
                 <div class="sub-empty">还没有提议。</div>
+              </div>
+              <div id="workflowVoteSettings" hidden>
+                <label class="form-note" style="display:flex;align-items:center;gap:.5rem;min-height:44px"><input type="checkbox" id="resultVotingToggle" />完成后开放结果投票</label>
+                <p class="form-msg" id="workflowVoteMsg" role="status"></p>
               </div>
               <div id="voteCtl" hidden>
                 <p class="form-note" id="voteState" style="margin:1.1rem 0 0.6rem"></p>
@@ -1913,6 +1920,8 @@
             skin: cfg.skinCode, qr: [], modules: cfg.modules, createdAt: Date.now()
           };
           if (cfg.moduleNames) meta.moduleNames = cfg.moduleNames;
+          meta.workflow = cfg.workflow || "general";
+          meta.resultVoting = cfg.workflow !== "project";
           if (cfg.wishEmpty || cfg.fundNote || cfg.voteNote) meta.guides = { wishEmpty: cfg.wishEmpty || "", fundNote: cfg.fundNote || "", voteNote: cfg.voteNote || "" };
           var drinkRows = (cfg.drinks || []).map(function (nm, i) {
             return { id: "k" + Date.now().toString(36) + i.toString(36) + Math.floor(Math.random() * 1296).toString(36), name: nm };
@@ -2247,11 +2256,11 @@
         /* ---------- 模板（页面内置配置，不占板位、不带任何真实板数据） ---------- */
         var TEMPLATES = [
           {
-            id: "project", name: "项目协作", tag: "项目模板",
+            workflow: "project", id: "project", name: "项目协作", tag: "项目模板",
             desc: "写目标、认领任务，一起推进。",
             skin: "molv",
             modules: { vote: true, wish: true, drink: false, fund: false },
-            moduleNames: { board: "项目进展", wish: "任务", vote: "优先级投票" },
+            moduleNames: { board: "项目进展", wish: "任务", vote: "提议投票" },
             drinks: [],
             boardTheme: "项目目标",
             boardIntro: "把要做的事写进任务，认领后显示在黑板。投票决定先做什么。",
@@ -2259,7 +2268,7 @@
             voteNote: "为最想优先推进的任务投票。"
           },
           {
-            id: "shokudo", name: "深夜食堂", tag: "聚餐模板",
+            workflow: "potluck", id: "shokudo", name: "深夜食堂", tag: "聚餐模板",
             desc: "黑板、投票、许愿池、酒水单、基金池，全开。",
             skin: "mitao",
             modules: { vote: true, wish: true, drink: true, fund: true },
@@ -2376,7 +2385,7 @@
           var t = cloneTpl;
           createBoard({
             name: name, member: member, host: host,
-            skinCode: t.skin, modules: t.modules, moduleNames: t.moduleNames,
+            workflow: t.workflow, skinCode: t.skin, modules: t.modules, moduleNames: t.moduleNames,
             drinks: t.drinks,
             boardTheme: t.boardTheme, boardIntro: t.boardIntro,
             wishEmpty: t.wishEmpty, fundNote: t.fundNote, voteNote: t.voteNote
@@ -2703,6 +2712,8 @@
                       fund: meta.modules.fund !== false
                     }
                   : { vote: true, wish: true, drink: true, fund: true },
+                workflow: meta.workflow || "general",
+                resultVoting: typeof meta.resultVoting === "boolean" ? meta.resultVoting : null,
                 moduleNames: (meta.moduleNames && typeof meta.moduleNames === "object" && !Array.isArray(meta.moduleNames)) ? meta.moduleNames : {},
                 qr: (meta.qr && typeof meta.qr.length === "number")
                   ? meta.qr.filter(function (q) { return q && typeof q.dataUrl === "string" && q.dataUrl; })
@@ -2794,19 +2805,23 @@
           var navNames = { board: "黑板", wish: "许愿池", vote: "投票", drink: "酒水单", fund: "基金池" };
           document.querySelectorAll("#board .section-nav [data-module]").forEach(function (link) {
             var key = link.dataset.module;
-            link.textContent = (META && META.moduleNames && META.moduleNames[key]) || navNames[key];
+            var label = (META && META.moduleNames && META.moduleNames[key]) || navNames[key];
+            if (key === "vote" && resultVoteEnabled() && ["提议投票", "优先级投票"].indexOf(label) >= 0) label = "结果投票";
+            link.textContent = label;
           });
           $("secBoardTitle").textContent = moduleName("board");
           $("wishTitle").textContent = moduleName("wish");
           $("drinkTitle").textContent = moduleName("drink");
           $("fundTitle").textContent = moduleName("fund");
-          $("rankTitle").textContent = moduleName("vote");
+          var voteTitle = moduleName("vote");
+          if (resultVoteEnabled() && ["提议投票", "优先级投票"].indexOf(voteTitle) >= 0) voteTitle = "结果投票";
+          $("rankTitle").textContent = voteTitle;
           var bn = (META && META.moduleNames) ? String(META.moduleNames.board || "").trim() : "";
           $("bbKicker").textContent = "— " + (bn || "本 期 黑 板") + " —";
           var fn = $("fundNote");
           if (fn) fn.textContent = (META && META.guides && META.guides.fundNote) || "凑钱投进小猪，只显示总额。";
           var vn = $("voteNote");
-          if (vn) vn.textContent = (META && META.guides && META.guides.voteNote) || "在黑板上投票，得票最高者居首。";
+          if (vn) vn.textContent = (META && META.guides && META.guides.voteNote) || "提议可先投支持票；黑板项目完成后再投结果票。";
         }
         /* ---------- 板块名就地改：标题旁小铅笔（仅主理人可见），点开标题变输入框，✓ 存（写 __meta）✕ 取消 ---------- */
         var TITLE_NAME_DEFS = [
@@ -3138,12 +3153,15 @@
         }
         function voteWinner() {
           var best = null;
-          subs.forEach(function (s) { if (!best || s.votes > best.votes) best = s; });
+          subs.filter(taskIsComplete).forEach(function (s) { if (!best || s.votes > best.votes) best = s; });
           return (best && best.votes > 0) ? best : null;
         }
         var voteClosedSeen = null;
         function renderVoteCtl() {
+          $("workflowVoteSettings").hidden = !isHost || !modOn("vote");
+          $("resultVotingToggle").checked = resultVoteEnabled();
           var ctl = $("voteCtl");
+          if (!resultVoteEnabled()) { ctl.hidden = true; return; }
           if (!ctl) return;
           ctl.hidden = !isHost;
           voteClosedSeen = voteClosed();
@@ -3225,6 +3243,7 @@
                 }
               }
               if (idx < 0) throw new Error("gone");
+              if (!taskIsComplete(dishes[idx]) || !resultVoteEnabled()) throw new Error("not_complete");
               var d = {};
               for (var k in dishes[idx]) d[k] = dishes[idx][k];
               if (!d.id && s.id) d.id = s.id;
@@ -3323,7 +3342,7 @@
               seen[did] = true;
               if (pendingRemovals[did]) continue;
               if (pendingDishes[did]) {
-                d = { id: did, cook: pendingDishes[did].cook, dish: pendingDishes[did].dish, desc: pendingDishes[did].desc, votes: (typeof d.votes === "number") ? d.votes : 0 };
+                d = Object.assign({}, d, pendingDishes[did], { votes: (typeof d.votes === "number") ? d.votes : 0 });
               }
             }
             eff.push(d);
@@ -3339,6 +3358,7 @@
             knownKeys[key] = true;
             return {
               id: id, key: key, cook: cook, dish: dish, desc: desc, fresh: fresh,
+              status: d.status || "in_progress", sourceWishId: d.sourceWishId || "", sourceWish: d.sourceWish || null,
               voted: !!(votedIds[key] || (id && votedStore[id])),
               mine: !!id && ownIds.indexOf(id) >= 0,
               votes: ((d && typeof d.votes === "number") ? d.votes : 0) + (pendingVotes[key] ? 1 : 0)
@@ -3452,11 +3472,15 @@
             list.appendChild(empty);
           } else {
             var ordered = subs.slice();
-            var winSub = voteClosed() ? voteWinner() : null;
+            var winSub = resultVoteEnabled() && voteClosed() ? voteWinner() : null;
             if (winSub) {
               ordered = [winSub].concat(ordered.filter(function (x) { return x !== winSub; }));
             }
+            ordered.sort(function (a,b) { return Number(taskIsComplete(a)) - Number(taskIsComplete(b)); });
+            var lastPhase = null;
             ordered.forEach(function (s) {
+              var phase = taskIsComplete(s);
+              if (phase !== lastPhase) { var heading=document.createElement("p"); heading.className="bb-phase"; heading.textContent=phase ? "已完成" : "进行中"; list.appendChild(heading); lastPhase=phase; }
               var row = document.createElement("div");
               row.className = "bb-row";
               var main = document.createElement("div");
@@ -3504,28 +3528,40 @@
               cookSpan.className = "bb-cook";
               cookSpan.textContent = s.desc ? (s.cook + " · " + s.desc) : s.cook;
               main.appendChild(cookSpan);
-              if (s.mine) {
+              if ((s.mine || isHost) && !taskIsComplete(s)) {
+                var complete = document.createElement("button");
+                complete.type = "button"; complete.className = "bb-act task-complete";
+                complete.textContent = isPotluck() ? "已上桌" : "标记完成";
+                complete.addEventListener("click", function () { completeTask(s, complete); });
+                main.appendChild(complete);
+              }
+              if (s.mine || isHost) {
                 var acts = document.createElement("div");
                 acts.className = "bb-actions";
                 var awayBtn = document.createElement("button");
                 awayBtn.type = "button";
                 awayBtn.className = "bb-act";
-                awayBtn.textContent = "撤回";
+                awayBtn.textContent = "撤回认领";
                 awayBtn.setAttribute("aria-label", "撤回「" + s.dish + "」");
+                awayBtn.disabled = taskIsComplete(s);
                 awayBtn.addEventListener("click", function () { withdrawDish(s, awayBtn); });
-                acts.appendChild(awayBtn);
+                if (taskIsComplete(s)) {
+                  var deleteBtn=document.createElement("button"); deleteBtn.type="button"; deleteBtn.className="bb-act task-delete"; deleteBtn.textContent="删除记录";
+                  deleteBtn.addEventListener("click", function () { deleteCompletedTask(s, deleteBtn); }); acts.appendChild(deleteBtn);
+                }
+                if (!taskIsComplete(s)) acts.appendChild(awayBtn);
                 main.appendChild(acts);
               }
               var voteBtn = document.createElement("button");
               voteBtn.type = "button";
               var closedNow = voteClosed();
               voteBtn.className = "bb-vote" + (s.voted && !closedNow ? " on" : "");
-              voteBtn.textContent = closedNow ? "已截止" : (s.voted ? "已投票" : "投一票");
-              if (s.voted || closedNow) voteBtn.disabled = true;
+              voteBtn.textContent = !taskIsComplete(s) ? "完成后投票" : closedNow ? "已截止" : (s.voted ? "已投票" : "投一票");
+              if (s.voted || closedNow || !taskIsComplete(s)) voteBtn.disabled = true;
               voteBtn.setAttribute("aria-pressed", s.voted ? "true" : "false");
               voteBtn.setAttribute("aria-label", "给「" + s.dish + "」投票");
               voteBtn.addEventListener("click", function () {
-                if (s.voted || voteClosed()) return;
+                if (s.voted || voteClosed() || !taskIsComplete(s) || !resultVoteEnabled()) return;
                 s.voted = true;
                 votedIds[s.key] = true;
                 if (s.id) { votedStore[s.id] = true; lsSet(VOTED_KEY, votedStore); }
@@ -3541,7 +3577,7 @@
               voteBox.appendChild(voteBtn);
               voteBox.appendChild(voteCount);
               row.appendChild(main);
-              if (modOn("vote")) row.appendChild(voteBox);
+              if (resultVoteEnabled()) row.appendChild(voteBox);
               list.appendChild(row);
             });
           }
@@ -3551,10 +3587,11 @@
         function renderRank() {
           var box = $("rankList");
           box.innerHTML = "";
+          if (!resultVoteEnabled()) { renderProposalRank(box); return; }
           var vNote = $("voteNote");
           if (vNote) vNote.textContent = voteClosed()
             ? "投票已截止，胜出已置顶在黑板上。"
-            : ((META && META.guides && META.guides.voteNote) || "在黑板上投票，得票最高者居首。");
+            : ((META && META.guides && META.guides.voteNote) || "提议可先投支持票；黑板项目完成后再投结果票。");
           if (!subs.length) {
             var empty = document.createElement("div");
             empty.className = "sub-empty";
@@ -3562,8 +3599,9 @@
             box.appendChild(empty);
             return;
           }
-          var sorted = subs.map(function (s, i) { return { s: s, i: i }; })
+          var sorted = subs.filter(taskIsComplete).map(function (s, i) { return { s: s, i: i }; })
             .sort(function (a, b) { return (b.s.votes - a.s.votes) || (a.i - b.i); });
+          if (!sorted.length) { box.textContent = "完成后再来投结果票。"; return; }
           var topVotes = sorted[0].s.votes;
           sorted.forEach(function (entry, r) {
             var s = entry.s;
@@ -3623,7 +3661,72 @@
         var cancelEditEl = $("cancelEditBtn");
         if (cancelEditEl) cancelEditEl.addEventListener("click", function () { endEdit("不改了，照旧。"); });
 
+        $("resultVotingToggle").addEventListener("change", function () {
+          if (!isHost) return;
+          var input=this, enabled=input.checked; input.disabled=true;
+          saveMeta({resultVoting:enabled}).then(function(ok){
+            input.disabled=false;
+            if(!ok){input.checked=resultVoteEnabled();$("workflowVoteMsg").textContent="没保存成功，请重试。";return;}
+            META.resultVoting=enabled;applyModuleNames();renderVoteCtl();rebuildBoard();
+            $("workflowVoteMsg").textContent=enabled?"完成后可以投结果票。":"只保留提议支持票。";
+          }).catch(function(){input.disabled=false;input.checked=resultVoteEnabled();$("workflowVoteMsg").textContent="没保存成功，请重试。";});
+        });
+        function taskIsComplete(t) { return t && t.status === "completed"; }
+        function isPotluck() { return !!META && META.workflow === "potluck"; }
+        function resultVoteEnabled() { return modOn("vote") && (META && typeof META.resultVoting === "boolean" ? META.resultVoting : !(META && (META.workflow === "project" || (META.moduleNames && ["优先级投票", "提议投票"].indexOf(META.moduleNames.vote) >= 0)))); }
+        function proposalVoteEnabled() { return modOn("vote"); }
+        function supportDevice() {
+          var key = NAME_KEY + "_support_device", id = lsGet(key, "");
+          if (!id) { id = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2); lsSet(key, id); }
+          return id;
+        }
+        function supportWish(w, btn) {
+          btn.disabled = true;
+          readWishRow().then(function (arr) {
+            var found = arr.find(function (x) { return x.id === w.id; });
+            if (!found || found.claimedBy) throw new Error("unavailable");
+            var voters = Array.isArray(found.supporters) ? found.supporters.slice() : [];
+            if (voters.indexOf(supportDevice()) >= 0) return true;
+            voters.push(supportDevice()); found.supporters = voters;
+            found.supportVotes = (Number(found.supportVotes) || 0) + 1;
+            return persistWishes(arr);
+          }).then(function (ok) { if (!ok) throw new Error("save"); if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "wish", action: "support" }); renderWishes(); renderRank(); })
+            .catch(function () { btn.disabled = false; $("wishMsg").textContent = "支持票没记上，请刷新后再试。"; });
+        }
+        function deleteCompletedTask(t, btn) {
+          if (!window.confirm("删除这条完成记录？此操作不会撤回认领。")) return;
+          btn.disabled=true;
+          readDishes().then(function(cur){
+            var task=cur.dishes.find(function(d){return String(d.id||"")===t.id;});
+            if(!task||!taskIsComplete(task))throw new Error("not_complete");
+            return readWishRow().then(function(arr){
+              var wish=arr.find(function(w){return w.id===task.sourceWishId;});
+              if(!wish)return true;
+              wish.completedAt=task.completedAt||Date.now();return persistWishes(arr);
+            }).then(function(ok){if(!ok)throw new Error("history");return sbSave({dishes:cur.dishes.filter(function(d){return String(d.id||"")!==t.id;})});});
+          }).then(function(ok){if(!ok)throw new Error("delete");$("wishMsg").textContent="完成记录已删除，提议历史保留。";renderWishes();})
+            .catch(function(){btn.disabled=false;$("wishMsg").textContent="删除未完成，请刷新后重试。";});
+        }
+        function completeTask(t, btn) {
+          btn.disabled = true;
+          readDishes().then(function (cur) {
+            var task = t.id ? cur.dishes.find(function (d) { return String(d.id || "") === t.id; }) : cur.dishes[Number(t.key.replace("old-", ""))];
+            if (task && !task.id) task.id = newDishId();
+            if (!task) throw new Error("gone");
+            task.status = "completed"; task.completedAt = Date.now();
+            return sbSave({ dishes: cur.dishes });
+          }).then(function (ok) { if (!ok) throw new Error("save"); if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "board", action: "complete" }); renderWishes(); $("wishMsg").textContent = isPotluck() ? "已上桌，可以投结果票了。" : "已完成，记录留在黑板上。"; })
+            .catch(function () { btn.disabled = false; $("wishMsg").textContent = "完成状态没保存，请重试。"; });
+        }
+        function renderProposalRank(box) {
+          var wishes = effWishes().filter(function (w) { return !w.kind || w.kind === "wish"; }).sort(function (a,b) { return (Number(b.supportVotes)||0)-(Number(a.supportVotes)||0); });
+          var note = $("voteNote"); if (note) note.textContent = "在提议旁投支持票，决定先做什么。";
+          if (!wishes.length) { box.textContent = "还没有提议。"; return; }
+          wishes.forEach(function (w) { var row=document.createElement("div"); row.className="rank-row"; row.textContent=w.dish+" · "+(Number(w.supportVotes)||0)+" 票"; box.appendChild(row); });
+        }
         function withdrawDish(s, btn) {
+          if (taskIsComplete(s)) return;
+
           if (!btn.dataset.armed) {
             btn.dataset.armed = "1";
             btn.dataset.label = btn.textContent;
@@ -3649,22 +3752,27 @@
             sbLoad();
             var wmF = $("wishMsg"); if (wmF) wmF.textContent = "没撤成，「" + s.dish + "」还在板上，再试一次。";
           }
-          readDishes()
-            .then(function (cur) {
-              var dishes = cur.dishes.filter(function (d) { return !d || String(d.id || "") !== s.id; });
-              delete pendingRemovals[s.id];
-              return sbSave({ dishes: dishes });
-            })
-            .then(function (ok) {
-              if (ok) {
-                ownIds = ownIds.filter(function (oid) { return oid !== s.id; });
-                lsSet(OWN_KEY, ownIds);
-                if (editingId === s.id) endEdit("「" + s.dish + "」撤回了。");
-              } else {
-                fail();
-              }
-            })
-            .catch(fail);
+          readDishes().then(function (cur) {
+            var task = cur.dishes.find(function (d) { return String(d.id || "") === s.id; });
+            if (!task || taskIsComplete(task)) throw new Error("gone");
+            return readWishRow().then(function (arr) {
+              var wish = arr.find(function (w) { return w.id === task.sourceWishId || w.taskId === task.id || (!task.sourceWishId && w.dish === task.dish && w.claimedBy === task.cook); });
+              if (!wish) { wish = Object.assign({}, task.sourceWish || {}, { id: task.sourceWishId || newWishId(), dish: task.dish, wisher: (task.sourceWish && task.sourceWish.wisher) || task.cook, kind: "wish" }); arr.unshift(wish); }
+              delete wish.claimedBy; delete wish.taskId; delete wish.completedAt;
+              wish.previousResultVotes = Number(task.votes) || 0;
+              return persistWishes(arr).then(function (ok) {
+                if (!ok) throw new Error("restore");
+                return sbSave({ dishes: cur.dishes.filter(function (d) { return String(d.id || "") !== s.id; }) });
+              });
+            });
+          }).then(function (ok) {
+            if (!ok) throw new Error("remove");
+            delete pendingRemovals[s.id];
+            ownIds = ownIds.filter(function (id) { return id !== s.id; }); lsSet(OWN_KEY, ownIds);
+            rebuildBoard(); renderWishes();
+            if (window.XQMetrics) window.XQMetrics.track("module_success", { module: "board", action: "release" });
+            $("wishMsg").textContent = "已撤回认领，提议回到池里，支持票保留。";
+          }).catch(function () { delete pendingRemovals[s.id]; rebuildBoard(); sbLoad(); wishLoad(); $("wishMsg").textContent = "撤回未完成，请刷新后重试，原记录保留。"; });
         }
 
         var subFormEl = $("subForm"); if (subFormEl) subFormEl.addEventListener("submit", function (e) {
@@ -3701,7 +3809,7 @@
                 var old = cur.dishes[idx];
                 cur.dishes[idx] = {
                   id: targetId, cook: cook, dish: dish, desc: old.desc || "",
-                  votes: (typeof old.votes === "number") ? old.votes : 0
+                  status: old.status, sourceWishId: old.sourceWishId, sourceWish: old.sourceWish, votes: (typeof old.votes === "number") ? old.votes : 0
                 };
                 delete pendingDishes[targetId];
                 return sbSave({ dishes: cur.dishes });
@@ -3735,7 +3843,7 @@
           }
 
           var nid = newDishId();
-          var newDish = { id: nid, cook: cook, dish: dish, desc: desc, votes: 0 };
+          var newDish = { id: nid, cook: cook, dish: dish, desc: desc, votes: 0, status: "in_progress" };
           pendingDishes[nid] = newDish;
           ownIds.push(nid);
           lsSet(OWN_KEY, ownIds);
@@ -3743,6 +3851,7 @@
           fm.textContent = "写上黑板了——「" + dish + "」。";
           readDishes()
             .then(function (cur) {
+              if (cur.dishes.some(function (d) { return d.sourceWishId === w.id; })) throw new Error("already_claimed");
               cur.dishes.push(newDish);
               delete pendingDishes[nid];
               return sbSave({ theme: cur.theme, style: cur.style, dishes: cur.dishes });
@@ -3848,7 +3957,7 @@
             if (claimedBy) {
               var status = document.createElement("div");
               status.className = "wish-status";
-              status.textContent = "已安排 · " + w.dish + " —— " + claimedBy + "来做";
+              status.textContent = (w.completedAt || subs.some(function (t) { return t.sourceWishId === w.id && taskIsComplete(t); }) ? "已完成 · " : "已安排 · ") + w.dish + " —— " + claimedBy + "来做";
               main.appendChild(status);
             } else {
               var meta = document.createElement("div");
@@ -3883,6 +3992,13 @@
               delBtn.setAttribute("aria-label", "删除愿望「" + w.dish + "」");
               delBtn.addEventListener("click", function () { removeWish(w, delBtn); });
               acts.appendChild(delBtn);
+            }
+            if (proposalVoteEnabled() && (!w.kind || w.kind === "wish")) {
+              var support = document.createElement("button"); support.type = "button"; support.className = "wish-claim proposal-vote";
+              var hasSupported = (Array.isArray(w.supporters) ? w.supporters : []).indexOf(supportDevice()) >= 0;
+              support.textContent = (hasSupported ? "已支持" : "支持") + " · " + (Number(w.supportVotes) || 0);
+              support.disabled = hasSupported || !!w.claimedBy;
+              support.addEventListener("click", function () { supportWish(w, support); }); acts.appendChild(support);
             }
             row.appendChild(acts);
             if (claimingId === w.id) {
@@ -4053,6 +4169,7 @@
         });
 
         function removeWish(w, btn) {
+          if (w.claimedBy || subs.some(function (t) { return t.sourceWishId === w.id; })) { $("wishMsg").textContent = "先撤回认领，再删除提议。"; return; }
           if (!btn.dataset.armed) {
             btn.dataset.armed = "1";
             btn.dataset.label = btn.textContent;
@@ -4110,7 +4227,7 @@
           pendingWishClaims[w.id] = claimant;
           renderWishes();
           var nid = newDishId();
-          var newDish = { id: nid, cook: claimant, dish: w.dish, desc: "", votes: 0 };
+          var newDish = { id: nid, cook: claimant, dish: w.dish, desc: "", votes: 0, status: "in_progress", sourceWishId: w.id, sourceWish: Object.assign({}, w) };
           pendingDishes[nid] = newDish;
           ownIds.push(nid);
           lsSet(OWN_KEY, ownIds);
@@ -4143,6 +4260,7 @@
                     var c = {};
                     for (var k in x) c[k] = x[k];
                     c.claimedBy = claimant;
+                    c.taskId = nid;
                     return c;
                   });
                   return persistWishes(next);
