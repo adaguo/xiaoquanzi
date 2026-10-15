@@ -1061,6 +1061,33 @@
       #wishBoard .proposal-vote { color:var(--pool-soft); font-size:.85rem; }
       #wishBoard .wish-del { margin-left:auto; min-height:44px; font-size:.8rem; }
       @media(max-width:360px) { #wishBoard .wish-acts { margin-left:0; gap:1rem; } }
+
+      #wishBoard .wish-row { display:grid; grid-template-columns:1fr; gap:.3rem .7rem; padding:.85rem 1rem .35rem; border-radius:4px; box-shadow:0 1px 4px rgba(38,34,28,.05); }
+      #wishBoard .wish-row:nth-child(n) { transform:none; }
+      #wishBoard .wish-main { grid-column:1 / -1; width:100%; min-width:0; }
+      #wishBoard .wish-dish { font-size:1.3rem; line-height:1.5; }
+      #wishBoard .wish-acts { grid-column:1 / -1; width:100%; min-width:0; margin:.45rem 0 0; padding-top:.25rem; display:flex; flex-wrap:wrap; align-items:center; gap:1.1rem; border-top:1px solid rgba(38,34,28,.08); }
+      #wishBoard .wish-row .wish-claim:not(.solid) { background:transparent; border:0; padding:.15rem 0; min-height:44px; border-radius:0; }
+      #wishBoard .wish-row .wish-claim:not(.solid):not(.proposal-vote) { text-decoration:underline; text-underline-offset:4px; }
+      #wishBoard .proposal-vote { color:var(--pool-soft); font-size:.85rem; }
+      #wishBoard .wish-del { margin-left:auto; min-height:44px; font-size:.8rem; }
+      #wishBoard .wish-row { grid-template-columns:auto minmax(0,1fr); }
+      #wishBoard .wish-main { grid-column:2; }
+      #wishBoard .wish-badge { align-self:start; margin-top:.2rem; }
+
+      #wishBoard .wish-row { grid-template-columns:1fr auto; padding:.85rem 1rem; column-gap:.8rem; row-gap:.15rem; }
+      #wishBoard .wish-row:nth-child(odd) { transform:rotate(-.7deg); }
+      #wishBoard .wish-row:nth-child(even) { transform:rotate(.6deg); }
+      #wishBoard .wish-main { display:contents; }
+      #wishBoard .wish-dish { grid-column:1 / -1; grid-row:1; }
+      #wishBoard .wish-meta { grid-column:1; grid-row:2; align-self:center; min-width:0; }
+      #wishBoard .wish-acts { grid-column:2; grid-row:2; width:auto; margin:0; padding:0; border:0; justify-content:flex-end; gap:.8rem; }
+      #wishBoard .wish-badge { display:none; }
+      #wishBoard .wish-status { grid-column:1 / -1; grid-row:3; }
+      #wishBoard .wish-confirm { grid-column:1 / -1; }
+      #wishBoard .wish-del { margin-left:0; }
+      @media(max-width:340px) { #wishBoard .wish-acts { gap:.5rem; } }
+      #wishBoard .wish-row { box-shadow:0 5px 12px rgba(38,34,28,.10),0 1px 2px rgba(38,34,28,.06); border-top:1px solid rgba(255,255,255,.55); }
     </style>
   </head>
   <body>
@@ -3968,6 +3995,8 @@
             dishEl.textContent = w.dish;
             main.appendChild(dishEl);
             if (claimedBy) {
+              var ownerName = document.createElement("div");
+              ownerName.className = "wish-meta"; ownerName.textContent = String(w.wisher || ""); main.appendChild(ownerName);
               var status = document.createElement("div");
               status.className = "wish-status";
               status.textContent = (w.completedAt || subs.some(function (t) { return t.sourceWishId === w.id && taskIsComplete(t); }) ? "已完成 · " : "已安排 · ") + w.dish + " —— " + claimedBy + "来做";
