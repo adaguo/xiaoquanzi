@@ -791,6 +791,12 @@
       .bb-phase { font-size:.9rem; opacity:.75; margin:1rem 0 .3rem; }
       .task-status { grid-column:1; grid-row:3; font-size:.8rem; opacity:.8; }
       .task-complete { grid-column:2; grid-row:3; justify-self:end; min-height:44px; max-width:100%; }
+
+      .bb-actions { grid-column:1 / -1; grid-row:3; justify-self:start; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:.6rem; }
+      .bb-actions .bb-act { min-height:44px; display:inline-flex; align-items:center; text-decoration:none; }
+      .bb-act + .bb-act::before { content:none; }
+      .bb-actions .task-complete { border:1px solid rgba(242,237,227,.3); border-radius:5px; padding:0 .8rem; color:#f2ede3; }
+      .bb-actions .task-complete:hover { border-color:#f2ede3; }
     </style>
   </head>
   <body>
@@ -2598,12 +2604,13 @@
                 complete.type = "button"; complete.className = "bb-act task-complete";
                 complete.textContent = isPotluck() ? "已上桌" : "标记完成";
                 complete.addEventListener("click", function () { completeTask(s, complete); });
-                main.appendChild(complete);
+
               }
               if (s.mine || isHost) {
                 // 自己写的菜：可以改，也可以撤（只有提交的那台设备看得见）
                 var acts = document.createElement("div");
                 acts.className = "bb-actions";
+                if (complete) acts.appendChild(complete);
                 var editBtn = document.createElement("button");
                 editBtn.type = "button";
                 editBtn.className = "bb-act";

@@ -1049,6 +1049,18 @@
       .bb-phase { font-size:.9rem; opacity:.75; margin:1rem 0 .3rem; }
       .task-status { grid-column:1; grid-row:3; font-size:.8rem; opacity:.8; }
       .task-complete { grid-column:2; grid-row:3; justify-self:end; min-height:44px; max-width:100%; }
+
+      .bb-actions { grid-column:1 / -1; grid-row:3; justify-self:start; align-items:center; flex-wrap:wrap; gap:1rem; margin-top:.6rem; }
+      .bb-actions .bb-act { min-height:44px; display:inline-flex; align-items:center; text-decoration:none; }
+      .bb-act + .bb-act::before { content:none; }
+      .bb-actions .task-complete { border:1px solid rgba(242,237,227,.3); border-radius:5px; padding:0 .8rem; color:#f2ede3; }
+      .bb-actions .task-complete:hover { border-color:#f2ede3; }
+      #wishBoard .wish-acts { flex:1 1 100%; gap:1.2rem; margin-left:2.7rem; flex-wrap:wrap; }
+      #wishBoard .wish-row .wish-claim:not(.solid) { border:0; border-radius:0; padding:.15rem 0; min-height:44px; background:transparent; text-underline-offset:4px; }
+      #wishBoard .wish-row .wish-claim:not(.proposal-vote):not(.solid) { text-decoration:underline; }
+      #wishBoard .proposal-vote { color:var(--pool-soft); font-size:.85rem; }
+      #wishBoard .wish-del { margin-left:auto; min-height:44px; font-size:.8rem; }
+      @media(max-width:360px) { #wishBoard .wish-acts { margin-left:0; gap:1rem; } }
     </style>
   </head>
   <body>
@@ -3533,11 +3545,12 @@
                 complete.type = "button"; complete.className = "bb-act task-complete";
                 complete.textContent = isPotluck() ? "已上桌" : "标记完成";
                 complete.addEventListener("click", function () { completeTask(s, complete); });
-                main.appendChild(complete);
+
               }
               if (s.mine || isHost) {
                 var acts = document.createElement("div");
                 acts.className = "bb-actions";
+                if (complete) acts.appendChild(complete);
                 var awayBtn = document.createElement("button");
                 awayBtn.type = "button";
                 awayBtn.className = "bb-act";
@@ -3996,9 +4009,9 @@
             if (proposalVoteEnabled() && (!w.kind || w.kind === "wish")) {
               var support = document.createElement("button"); support.type = "button"; support.className = "wish-claim proposal-vote";
               var hasSupported = (Array.isArray(w.supporters) ? w.supporters : []).indexOf(supportDevice()) >= 0;
-              support.textContent = (hasSupported ? "已支持" : "支持") + " · " + (Number(w.supportVotes) || 0);
+              support.textContent = (hasSupported ? "♥ 已支持" : "♡ 支持") + " · " + (Number(w.supportVotes) || 0);
               support.disabled = hasSupported || !!w.claimedBy;
-              support.addEventListener("click", function () { supportWish(w, support); }); acts.appendChild(support);
+              support.addEventListener("click", function () { supportWish(w, support); }); acts.insertBefore(support, acts.querySelector(".wish-del"));
             }
             row.appendChild(acts);
             if (claimingId === w.id) {
